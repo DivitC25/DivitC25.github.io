@@ -7,20 +7,88 @@
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-    <main>
+    <main class="project-page">
         <a class="back-link" href="../index.html">&larr; Back to portfolio</a>
 
-        <h1>Project 0</h1>
-        <p class="subtitle">Getting Started</p>
+        <header class="project-header">
+            <h1>Project 0</h1>
+            <p class="subtitle">Camera Geometry &amp; Perspective</p>
+        </header>
 
-        <article>
-            <h2>Overview</h2>
-            <p>
-                This is the setup project for CS180. The portfolio site is live at
-                <a href="https://divitc25.github.io">divitc25.github.io</a> and is
-                ready for future project submissions.
+        <!-- Part 1 -->
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-number">01</span>
+                <h2>Selfie: The Wrong Way vs. The Right Way</h2>
+            </div>
+            <p class="part-desc">
+                A close-up portrait distorts facial features due to wide-angle perspective — the nose
+                appears oversized while the ears recede. Stepping back and zooming in keeps the face
+                the same size but compresses depth, producing a much more natural portrait.
             </p>
-        </article>
+            <div class="comparison">
+                <figure>
+                    <img src="./media/3016.png" alt="Close-up selfie with perspective distortion">
+                    <figcaption>
+                        <span class="label label-before">Before</span>
+                        Close up — distorted
+                    </figcaption>
+                </figure>
+                <figure>
+                    <img src="./media/3026.png" alt="Portrait taken from further away with zoom">
+                    <figcaption>
+                        <span class="label label-after">After</span>
+                        Stepped back &amp; zoomed in
+                    </figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <!-- Part 2 -->
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-number">02</span>
+                <h2>Architectural Perspective Compression</h2>
+            </div>
+            <p class="part-desc">
+                Zooming in on a distant building flattens the scene — background elements appear
+                compressed together. Walking closer without zoom restores natural depth and
+                perspective, even when the building occupies the same frame size.
+            </p>
+            <div class="comparison">
+                <figure>
+                    <img src="./media/3014.png" alt="Building photographed from far away with zoom">
+                    <figcaption>
+                        <span class="label label-before">Before</span>
+                        Zoomed in from a distance
+                    </figcaption>
+                </figure>
+                <figure>
+                    <img src="./media/3015.png" alt="Building photographed up close without zoom">
+                    <figcaption>
+                        <span class="label label-after">After</span>
+                        Walked up to the building
+                    </figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <!-- Part 3 -->
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-number">03</span>
+                <h2>The Dolly Zoom</h2>
+            </div>
+            <p class="part-desc">
+                The dolly zoom — also called the "Vertigo shot" — combines a physical camera move
+                with an opposing zoom. The subject stays the same size while the background appears
+                to warp and shift, creating a disorienting sense of depth change.
+            </p>
+            <figure class="single-media">
+                <img src="./media/dolly-zoom.gif" alt="Dolly zoom effect demonstration">
+                <figcaption>Dolly zoom on a notebook — background expands and contracts</figcaption>
+            </figure>
+        </section>
     </main>
 
     <footer>
