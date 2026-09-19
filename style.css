@@ -244,6 +244,7 @@ nav a:hover .nav-arrow {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
+    align-items: stretch;
 }
 
 .comparison + .comparison {
@@ -254,21 +255,26 @@ nav a:hover .nav-arrow {
     margin-top: 2.5rem;
 }
 
-.pyramid-example .example-label {
-    display: block;
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
+.example-heading {
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.example-heading h3 {
+    margin: 0;
+    font-size: 1.05rem;
     font-weight: 500;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--rust);
-    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+    color: var(--ink);
 }
 
 .plate-row {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 1.25rem;
+    align-items: stretch;
 }
 
 .pyramid-result {
@@ -278,6 +284,8 @@ nav a:hover .nav-arrow {
 .photo-card {
     display: flex;
     flex-direction: column;
+    height: 100%;
+    gap: 1rem;
 }
 
 .photo-frame {
@@ -299,7 +307,8 @@ nav a:hover .nav-arrow {
 }
 
 .photo-caption {
-    margin-top: 1rem;
+    width: 100%;
+    margin: 0;
     padding: 0.75rem 1rem;
     font-family: var(--font-mono);
     font-size: 0.72rem;
@@ -307,6 +316,8 @@ nav a:hover .nav-arrow {
     letter-spacing: 0.04em;
     text-align: center;
     border-radius: var(--radius);
+    box-sizing: border-box;
+    flex-shrink: 0;
 }
 
 .caption-before {

@@ -21,50 +21,66 @@
                 <h2>Single-scale Alignment</h2>
             </div>
 
-            <div class="comparison">
-                <div class="photo-card">
-                    <div class="photo-frame">
-                        <img src="./media/cathedral_unaligned.jpg" alt="Cathedral unaligned">
-                    </div>
-                    <p class="photo-caption caption-before">Cathedral · Unaligned</p>
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Cathedral</h3>
                 </div>
-                <div class="photo-card">
-                    <div class="photo-frame">
-                        <img src="./image_outputs_single/cathedral_colorized.jpg" alt="Cathedral aligned single-scale">
+                <div class="comparison">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Unaligned</p>
+                        <div class="photo-frame">
+                            <img src="./media/cathedral_unaligned.jpg" alt="Cathedral unaligned">
+                        </div>
                     </div>
-                    <p class="photo-caption caption-after">Cathedral · Aligned</p>
-                </div>
-            </div>
-
-            <div class="comparison">
-                <div class="photo-card">
-                    <div class="photo-frame">
-                        <img src="./media/monastery_unaligned.jpg" alt="Monastery unaligned">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Aligned</p>
+                        <div class="photo-frame">
+                            <img src="./image_outputs_single/cathedral_colorized.jpg" alt="Cathedral aligned single-scale">
+                        </div>
                     </div>
-                    <p class="photo-caption caption-before">Monastery · Unaligned</p>
-                </div>
-                <div class="photo-card">
-                    <div class="photo-frame">
-                        <img src="./image_outputs_single/monastery_colorized.jpg" alt="Monastery aligned single-scale">
-                    </div>
-                    <p class="photo-caption caption-after">Monastery · Aligned</p>
                 </div>
             </div>
 
-            <div class="comparison">
-                <div class="photo-card">
-                    <div class="photo-frame">
-                        <img src="./media/tobolsk_unaligned.jpg" alt="Tobolsk unaligned">
-                    </div>
-                    <p class="photo-caption caption-before">Tobolsk · Unaligned</p>
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Monastery</h3>
                 </div>
-                <div class="photo-card">
-                    <div class="photo-frame">
-                        <img src="./image_outputs_single/tobolsk_colorized.jpg" alt="Tobolsk aligned single-scale">
+                <div class="comparison">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Unaligned</p>
+                        <div class="photo-frame">
+                            <img src="./media/monastery_unaligned.jpg" alt="Monastery unaligned">
+                        </div>
                     </div>
-                    <p class="photo-caption caption-after">Tobolsk · Aligned</p>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Aligned</p>
+                        <div class="photo-frame">
+                            <img src="./image_outputs_single/monastery_colorized.jpg" alt="Monastery aligned single-scale">
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Tobolsk</h3>
+                </div>
+                <div class="comparison">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Unaligned</p>
+                        <div class="photo-frame">
+                            <img src="./media/tobolsk_unaligned.jpg" alt="Tobolsk unaligned">
+                        </div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Aligned</p>
+                        <div class="photo-frame">
+                            <img src="./image_outputs_single/tobolsk_colorized.jpg" alt="Tobolsk aligned single-scale">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <div class="part-explanation">
                 <p>I started with finding the ideal colorizing shifts of low-res JPEGs consisting of the cathedral, the monastery, and the tobolsk using single-scale alignment. In order to try a good shift search radius and not hugely inflate the processing time per image, I tried every offset in a ±15 window for both x and y. I scored each candidate on its similarity to the blue plate utilizing the NCC (effectively normalized cosine similarity) metric, while also implementing the L2 scoring metric for comparisons.</p>
@@ -80,353 +96,419 @@
             </div>
 
             <div class="pyramid-example">
-                <span class="example-label">Church</span>
+                <div class="example-heading">
+                <h3>Church</h3>
+                </div>
                 <div class="plate-row">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Blue plate</p>
+                    <div class="photo-frame">
                             <img src="./media/church_blue.jpg" alt="Church blue plate">
                         </div>
-                        <p class="photo-caption caption-before">Blue plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Green plate</p>
+                    <div class="photo-frame">
                             <img src="./media/church_green.jpg" alt="Church green plate">
                         </div>
-                        <p class="photo-caption caption-before">Green plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Red plate</p>
+                    <div class="photo-frame">
                             <img src="./media/church_red.jpg" alt="Church red plate">
                         </div>
-                        <p class="photo-caption caption-before">Red plate</p>
+                
                     </div>
                 </div>
                 <div class="pyramid-result">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-after">Aligned (pyramid)</p>
+                    <div class="photo-frame">
                             <img src="./media/church_pyramid.jpg" alt="Church pyramid aligned">
                         </div>
-                        <p class="photo-caption caption-after">Church · Aligned (pyramid)</p>
+                
                     </div>
                 </div>
             </div>
 
             <div class="pyramid-example">
-                <span class="example-label">Emir</span>
+                <div class="example-heading">
+                <h3>Emir</h3>
+                </div>
                 <div class="plate-row">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Blue plate</p>
+                    <div class="photo-frame">
                             <img src="./media/emir_blue.jpg" alt="Emir blue plate">
                         </div>
-                        <p class="photo-caption caption-before">Blue plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Green plate</p>
+                    <div class="photo-frame">
                             <img src="./media/emir_green.jpg" alt="Emir green plate">
                         </div>
-                        <p class="photo-caption caption-before">Green plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Red plate</p>
+                    <div class="photo-frame">
                             <img src="./media/emir_red.jpg" alt="Emir red plate">
                         </div>
-                        <p class="photo-caption caption-before">Red plate</p>
+                
                     </div>
                 </div>
                 <div class="pyramid-result">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-after">Aligned (pyramid)</p>
+                    <div class="photo-frame">
                             <img src="./media/emir_pyramid.jpg" alt="Emir pyramid aligned">
                         </div>
-                        <p class="photo-caption caption-after">Emir · Aligned (pyramid)</p>
+                
                     </div>
                 </div>
             </div>
 
             <div class="pyramid-example">
-                <span class="example-label">Harvesters</span>
+                <div class="example-heading">
+                <h3>Harvesters</h3>
+                </div>
                 <div class="plate-row">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Blue plate</p>
+                    <div class="photo-frame">
                             <img src="./media/harvesters_blue.jpg" alt="Harvesters blue plate">
                         </div>
-                        <p class="photo-caption caption-before">Blue plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Green plate</p>
+                    <div class="photo-frame">
                             <img src="./media/harvesters_green.jpg" alt="Harvesters green plate">
                         </div>
-                        <p class="photo-caption caption-before">Green plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Red plate</p>
+                    <div class="photo-frame">
                             <img src="./media/harvesters_red.jpg" alt="Harvesters red plate">
                         </div>
-                        <p class="photo-caption caption-before">Red plate</p>
+                
                     </div>
                 </div>
                 <div class="pyramid-result">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-after">Aligned (pyramid)</p>
+                    <div class="photo-frame">
                             <img src="./media/harvesters_pyramid.jpg" alt="Harvesters pyramid aligned">
                         </div>
-                        <p class="photo-caption caption-after">Harvesters · Aligned (pyramid)</p>
+                
                     </div>
                 </div>
             </div>
 
             <div class="pyramid-example">
-                <span class="example-label">Icon</span>
+                <div class="example-heading">
+                <h3>Icon</h3>
+                </div>
                 <div class="plate-row">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Blue plate</p>
+                    <div class="photo-frame">
                             <img src="./media/icon_blue.jpg" alt="Icon blue plate">
                         </div>
-                        <p class="photo-caption caption-before">Blue plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Green plate</p>
+                    <div class="photo-frame">
                             <img src="./media/icon_green.jpg" alt="Icon green plate">
                         </div>
-                        <p class="photo-caption caption-before">Green plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Red plate</p>
+                    <div class="photo-frame">
                             <img src="./media/icon_red.jpg" alt="Icon red plate">
                         </div>
-                        <p class="photo-caption caption-before">Red plate</p>
+                
                     </div>
                 </div>
                 <div class="pyramid-result">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-after">Aligned (pyramid)</p>
+                    <div class="photo-frame">
                             <img src="./media/icon_pyramid.jpg" alt="Icon pyramid aligned">
                         </div>
-                        <p class="photo-caption caption-after">Icon · Aligned (pyramid)</p>
+                
                     </div>
                 </div>
             </div>
 
             <div class="pyramid-example">
-                <span class="example-label">Ilemselga</span>
+                <div class="example-heading">
+                <h3>Ilemselga</h3>
+                </div>
                 <div class="plate-row">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Blue plate</p>
+                    <div class="photo-frame">
                             <img src="./media/ilemselga_blue.jpg" alt="Ilemselga blue plate">
                         </div>
-                        <p class="photo-caption caption-before">Blue plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Green plate</p>
+                    <div class="photo-frame">
                             <img src="./media/ilemselga_green.jpg" alt="Ilemselga green plate">
                         </div>
-                        <p class="photo-caption caption-before">Green plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Red plate</p>
+                    <div class="photo-frame">
                             <img src="./media/ilemselga_red.jpg" alt="Ilemselga red plate">
                         </div>
-                        <p class="photo-caption caption-before">Red plate</p>
+                
                     </div>
                 </div>
                 <div class="pyramid-result">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-after">Aligned (pyramid)</p>
+                    <div class="photo-frame">
                             <img src="./media/ilemselga_pyramid.jpg" alt="Ilemselga pyramid aligned">
                         </div>
-                        <p class="photo-caption caption-after">Ilemselga · Aligned (pyramid)</p>
+                
                     </div>
                 </div>
             </div>
 
             <div class="pyramid-example">
-                <span class="example-label">Melons</span>
+                <div class="example-heading">
+                <h3>Melons</h3>
+                </div>
                 <div class="plate-row">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Blue plate</p>
+                    <div class="photo-frame">
                             <img src="./media/melons_blue.jpg" alt="Melons blue plate">
                         </div>
-                        <p class="photo-caption caption-before">Blue plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Green plate</p>
+                    <div class="photo-frame">
                             <img src="./media/melons_green.jpg" alt="Melons green plate">
                         </div>
-                        <p class="photo-caption caption-before">Green plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Red plate</p>
+                    <div class="photo-frame">
                             <img src="./media/melons_red.jpg" alt="Melons red plate">
                         </div>
-                        <p class="photo-caption caption-before">Red plate</p>
+                
                     </div>
                 </div>
                 <div class="pyramid-result">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-after">Aligned (pyramid)</p>
+                    <div class="photo-frame">
                             <img src="./media/melons_pyramid.jpg" alt="Melons pyramid aligned">
                         </div>
-                        <p class="photo-caption caption-after">Melons · Aligned (pyramid)</p>
+                
                     </div>
                 </div>
             </div>
 
             <div class="pyramid-example">
-                <span class="example-label">Religious Painting</span>
+                <div class="example-heading">
+                <h3>Religious Painting</h3>
+                </div>
                 <div class="plate-row">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Blue plate</p>
+                    <div class="photo-frame">
                             <img src="./media/religous_painting_blue.jpg" alt="Religious Painting blue plate">
                         </div>
-                        <p class="photo-caption caption-before">Blue plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Green plate</p>
+                    <div class="photo-frame">
                             <img src="./media/religous_painting_green.jpg" alt="Religious Painting green plate">
                         </div>
-                        <p class="photo-caption caption-before">Green plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Red plate</p>
+                    <div class="photo-frame">
                             <img src="./media/religous_painting_red.jpg" alt="Religious Painting red plate">
                         </div>
-                        <p class="photo-caption caption-before">Red plate</p>
+                
                     </div>
                 </div>
                 <div class="pyramid-result">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-after">Aligned (pyramid)</p>
+                    <div class="photo-frame">
                             <img src="./media/religous_painting_pyramid.jpg" alt="Religious Painting pyramid aligned">
                         </div>
-                        <p class="photo-caption caption-after">Religious Painting · Aligned (pyramid)</p>
+                
                     </div>
                 </div>
             </div>
 
             <div class="pyramid-example">
-                <span class="example-label">Self Portrait</span>
+                <div class="example-heading">
+                <h3>Self Portrait</h3>
+                </div>
                 <div class="plate-row">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Blue plate</p>
+                    <div class="photo-frame">
                             <img src="./media/self_portrait_blue.jpg" alt="Self Portrait blue plate">
                         </div>
-                        <p class="photo-caption caption-before">Blue plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Green plate</p>
+                    <div class="photo-frame">
                             <img src="./media/self_portrait_green.jpg" alt="Self Portrait green plate">
                         </div>
-                        <p class="photo-caption caption-before">Green plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Red plate</p>
+                    <div class="photo-frame">
                             <img src="./media/self_portrait_red.jpg" alt="Self Portrait red plate">
                         </div>
-                        <p class="photo-caption caption-before">Red plate</p>
+                
                     </div>
                 </div>
                 <div class="pyramid-result">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-after">Aligned (pyramid)</p>
+                    <div class="photo-frame">
                             <img src="./media/self_portrait_pyramid.jpg" alt="Self Portrait pyramid aligned">
                         </div>
-                        <p class="photo-caption caption-after">Self Portrait · Aligned (pyramid)</p>
+                
                     </div>
                 </div>
             </div>
 
             <div class="pyramid-example">
-                <span class="example-label">Siren</span>
+                <div class="example-heading">
+                <h3>Siren</h3>
+                </div>
                 <div class="plate-row">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Blue plate</p>
+                    <div class="photo-frame">
                             <img src="./media/siren_blue.jpg" alt="Siren blue plate">
                         </div>
-                        <p class="photo-caption caption-before">Blue plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Green plate</p>
+                    <div class="photo-frame">
                             <img src="./media/siren_green.jpg" alt="Siren green plate">
                         </div>
-                        <p class="photo-caption caption-before">Green plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Red plate</p>
+                    <div class="photo-frame">
                             <img src="./media/siren_red.jpg" alt="Siren red plate">
                         </div>
-                        <p class="photo-caption caption-before">Red plate</p>
+                
                     </div>
                 </div>
                 <div class="pyramid-result">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-after">Aligned (pyramid)</p>
+                    <div class="photo-frame">
                             <img src="./media/siren_pyramid.jpg" alt="Siren pyramid aligned">
                         </div>
-                        <p class="photo-caption caption-after">Siren · Aligned (pyramid)</p>
+                
                     </div>
                 </div>
             </div>
 
             <div class="pyramid-example">
-                <span class="example-label">Three Generations</span>
+                <div class="example-heading">
+                <h3>Three Generations</h3>
+                </div>
                 <div class="plate-row">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Blue plate</p>
+                    <div class="photo-frame">
                             <img src="./media/three_generations_blue.jpg" alt="Three Generations blue plate">
                         </div>
-                        <p class="photo-caption caption-before">Blue plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Green plate</p>
+                    <div class="photo-frame">
                             <img src="./media/three_generations_green.jpg" alt="Three Generations green plate">
                         </div>
-                        <p class="photo-caption caption-before">Green plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Red plate</p>
+                    <div class="photo-frame">
                             <img src="./media/three_generations_red.jpg" alt="Three Generations red plate">
                         </div>
-                        <p class="photo-caption caption-before">Red plate</p>
+                
                     </div>
                 </div>
                 <div class="pyramid-result">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-after">Aligned (pyramid)</p>
+                    <div class="photo-frame">
                             <img src="./media/three_generations_pyramid.jpg" alt="Three Generations pyramid aligned">
                         </div>
-                        <p class="photo-caption caption-after">Three Generations · Aligned (pyramid)</p>
+                
                     </div>
                 </div>
             </div>
 
             <div class="pyramid-example">
-                <span class="example-label">Wharf</span>
+                <div class="example-heading">
+                <h3>Wharf</h3>
+                </div>
                 <div class="plate-row">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Blue plate</p>
+                    <div class="photo-frame">
                             <img src="./media/wharf_blue.jpg" alt="Wharf blue plate">
                         </div>
-                        <p class="photo-caption caption-before">Blue plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Green plate</p>
+                    <div class="photo-frame">
                             <img src="./media/wharf_green.jpg" alt="Wharf green plate">
                         </div>
-                        <p class="photo-caption caption-before">Green plate</p>
+                
                     </div>
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-before">Red plate</p>
+                    <div class="photo-frame">
                             <img src="./media/wharf_red.jpg" alt="Wharf red plate">
                         </div>
-                        <p class="photo-caption caption-before">Red plate</p>
+                
                     </div>
                 </div>
                 <div class="pyramid-result">
                     <div class="photo-card">
-                        <div class="photo-frame">
+                        <p class="photo-caption caption-after">Aligned (pyramid)</p>
+                    <div class="photo-frame">
                             <img src="./media/wharf_pyramid.jpg" alt="Wharf pyramid aligned">
                         </div>
-                        <p class="photo-caption caption-after">Wharf · Aligned (pyramid)</p>
+                
                     </div>
                 </div>
             </div>
