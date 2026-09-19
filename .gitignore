@@ -1,0 +1,6 @@
+.DS_Store
+**/.DS_Store
+
+# Source plates and pyramid outputs (not used by the site)
+1/CS180_fa2026_proj1_data/
+1/image_outputs_pyramid/

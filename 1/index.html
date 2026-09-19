@@ -15,7 +15,63 @@
             <p class="subtitle">Colorizing the Prokudin-Gorskii Photo Collection</p>
         </header>
 
-        <div class="coming-soon">Coming soon</div>
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 1</span>
+                <h2>Single-scale Alignment</h2>
+            </div>
+
+            <div class="comparison">
+                <div class="photo-card">
+                    <div class="photo-frame">
+                        <img src="./media/cathedral_unaligned.jpg" alt="Cathedral unaligned">
+                    </div>
+                    <p class="photo-caption caption-before">Cathedral · Unaligned</p>
+                </div>
+                <div class="photo-card">
+                    <div class="photo-frame">
+                        <img src="./image_outputs_single/cathedral_colorized.jpg" alt="Cathedral aligned single-scale">
+                    </div>
+                    <p class="photo-caption caption-after">Cathedral · Aligned</p>
+                </div>
+            </div>
+
+            <div class="comparison">
+                <div class="photo-card">
+                    <div class="photo-frame">
+                        <img src="./media/monastery_unaligned.jpg" alt="Monastery unaligned">
+                    </div>
+                    <p class="photo-caption caption-before">Monastery · Unaligned</p>
+                </div>
+                <div class="photo-card">
+                    <div class="photo-frame">
+                        <img src="./image_outputs_single/monastery_colorized.jpg" alt="Monastery aligned single-scale">
+                    </div>
+                    <p class="photo-caption caption-after">Monastery · Aligned</p>
+                </div>
+            </div>
+
+            <div class="comparison">
+                <div class="photo-card">
+                    <div class="photo-frame">
+                        <img src="./media/tobolsk_unaligned.jpg" alt="Tobolsk unaligned">
+                    </div>
+                    <p class="photo-caption caption-before">Tobolsk · Unaligned</p>
+                </div>
+                <div class="photo-card">
+                    <div class="photo-frame">
+                        <img src="./image_outputs_single/tobolsk_colorized.jpg" alt="Tobolsk aligned single-scale">
+                    </div>
+                    <p class="photo-caption caption-after">Tobolsk · Aligned</p>
+                </div>
+            </div>
+
+            <div class="part-explanation">
+                <p>I started with finding the ideal colorizing shifts of low-res JPEGs consisting of the cathedral, the monastery, and the tobolsk using single-scale alignment. In order to try a good shift search radius and not hugely inflate the processing time per image, I tried every offset in a ±15 window for both x and y. I scored each candidate on its similarity to the blue plate utilizing the NCC (effectively normalized cosine similarity) metric, while also implementing the L2 scoring metric for comparisons.</p>
+                <p>I picked NCC because its normalization of both images relative to their respective brightness level allows an apples-to-apples comparison. In line with the recommendations in the assignment description, I only performed post flattening NCC scoring on overlapped regions of both images to remove shift padding. Before this scoring, I did a 25% border crop to remove high-contrast plate margins and handwritten marks that would otherwise dominate NCC. I also utilized sobel edges in scoring instead of raw intensity to highlight shared geometric features (windows, rooflines, railings) and downweight brightness differences that do not indicate features.</p>
+                <p>With this pipeline the cathedral, monastery, and tobolsk come out sharp in the subject area with no color ghosting. Notably, the colored bands at the frame edges represent uncropped plate borders, not misalignment.</p>
+            </div>
+        </section>
     </main>
 
     <footer>

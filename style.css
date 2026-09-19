@@ -246,6 +246,10 @@ nav a:hover .nav-arrow {
     gap: 2rem;
 }
 
+.comparison + .comparison {
+    margin-top: 2.5rem;
+}
+
 .photo-card {
     display: flex;
     flex-direction: column;
