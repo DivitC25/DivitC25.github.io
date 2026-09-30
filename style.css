@@ -399,14 +399,21 @@ nav a:hover .nav-arrow {
 .code-block {
     margin: 0;
     padding: 1.25rem 1.5rem;
-    overflow-x: auto;
+    max-width: 100%;
+    box-sizing: border-box;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
     background: var(--paper);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     line-height: 1.7;
     color: var(--ink);
+}
+
+.code-block code {
+    white-space: inherit;
 }
 
 /* ── Placeholder ── */
