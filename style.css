@@ -281,6 +281,38 @@ nav a:hover .nav-arrow {
     margin-top: 1.5rem;
 }
 
+.plate-row.two {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.plate-row.four {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.plate-row.five {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.75rem;
+}
+
+.plate-row + .plate-row,
+.comparison + .plate-row {
+    margin-top: 1.25rem;
+}
+
+.plate-row.five .photo-caption,
+.plate-row.four .photo-caption {
+    padding: 0.6rem 0.4rem;
+    font-size: 0.64rem;
+}
+
+.pixelated img {
+    image-rendering: pixelated;
+}
+
+.wide-media + .wide-media {
+    margin-top: 1.5rem;
+}
+
 .photo-card {
     display: flex;
     flex-direction: column;
@@ -344,6 +376,13 @@ nav a:hover .nav-arrow {
     margin-bottom: 1rem;
 }
 
+.part-explanation p.equation {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    text-align: center;
+    color: var(--ink);
+}
+
 .part-explanation p:last-child {
     margin-bottom: 0;
 }
@@ -355,6 +394,19 @@ nav a:hover .nav-arrow {
 
 .single-media .photo-frame {
     box-shadow: var(--shadow-lg);
+}
+
+.code-block {
+    margin: 0;
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1.7;
+    color: var(--ink);
 }
 
 /* ── Placeholder ── */
@@ -391,6 +443,12 @@ nav a:hover .nav-arrow {
     .plate-row {
         grid-template-columns: 1fr;
         gap: 1.5rem;
+    }
+
+    .plate-row.four,
+    .plate-row.five {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
     }
 
     nav a {

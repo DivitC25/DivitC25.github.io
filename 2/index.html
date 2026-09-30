@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project 2 — CS180 Portfolio</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <main class="project-page">
+        <a class="back-link" href="../index.html">← Back to portfolio</a>
+
+        <header class="project-header">
+            <h1>Project 2</h1>
+            <p class="subtitle">Fun with Filters and Frequencies</p>
+        </header>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 1.1</span>
+                <h2>Convolutions from Scratch</h2>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Four-loop convolution</h3>
+                </div>
+<pre class="code-block"><code>def four_convolve(self, image, kernel):
+    kernel = kernel[::-1, ::-1]
+    y_pad = kernel.shape[0] // 2
+    x_pad = kernel.shape[1] // 2
+    image = np.hstack((np.zeros((image.shape[0], x_pad)), image, np.zeros((image.shape[0], x_pad))))
+    image = np.vstack((np.zeros((y_pad, image.shape[1])), image, np.zeros((y_pad, image.shape[1]))))
+    convolved_image = np.zeros(image.shape)
+    for y in range(y_pad, image.shape[0] - y_pad):
+        for x in range(x_pad, image.shape[1] - x_pad):
+            new_value = 0
+            for i in range(-y_pad, y_pad + 1):
+                for j in range(-x_pad, x_pad + 1):
+                    new_value += image[y + i, x + j] * kernel[i + y_pad, j + x_pad]
+            convolved_image[y, x] = new_value
+    return convolved_image[y_pad:image.shape[0] - y_pad, x_pad:image.shape[1] - x_pad]</code></pre>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Two-loop convolution</h3>
+                </div>
+<pre class="code-block"><code>def two_convolve(self, image, kernel):
+    kernel = kernel[::-1, ::-1]
+    flattened_kernel = kernel.reshape((kernel.shape[0] * kernel.shape[1]))
+    y_pad = kernel.shape[0] // 2
+    x_pad = kernel.shape[1] // 2
+    image = np.hstack((np.zeros((image.shape[0], x_pad)), image, np.zeros((image.shape[0], x_pad))))
+    image = np.vstack((np.zeros((y_pad, image.shape[1])), image, np.zeros((y_pad, image.shape[1]))))
+    convolved_image = np.zeros(image.shape)
+    for y in range(y_pad, image.shape[0] - y_pad):
+        for x in range(x_pad, image.shape[1] - x_pad):
+            new_value = 0
+            extracted_image = image[y - y_pad : y + y_pad + 1, x - x_pad: x + x_pad + 1]
+            extracted_image = extracted_image.reshape((extracted_image.shape[0] * extracted_image.shape[1]))
+            new_value = np.dot(extracted_image, flattened_kernel)
+            convolved_image[y, x] = new_value
+    return convolved_image[y_pad:image.shape[0] - y_pad, x_pad:image.shape[1] - x_pad]</code></pre>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Filters and scipy comparison</h3>
+                </div>
+<pre class="code-block"><code>d_x = np.array([[1, 0, -1]])
+d_y = np.array([[1], [0], [-1]])
+box_filter = np.ones((9, 9)) / 81
+
+box_filter_custom = convolutions.four_convolve(convolutions.gray_image, box_filter)
+box_filter_scipy = signal.convolve2d(convolutions.gray_image, box_filter, mode='same')</code></pre>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Input: grayscale selfie</h3>
+                </div>
+                <div class="single-media">
+                    <div class="photo-frame"><img src="./media/p11_selfie_gray.jpg" alt="Grayscale selfie"></div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Finite difference Dx</h3>
+                </div>
+                <div class="comparison">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Custom (numpy)</p>
+                        <div class="photo-frame"><img src="./media/p11_dx_custom.jpg" alt="Dx custom convolution"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">scipy.signal.convolve2d</p>
+                        <div class="photo-frame"><img src="./media/p11_dx_scipy.jpg" alt="Dx scipy convolution"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Finite difference Dy</h3>
+                </div>
+                <div class="comparison">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Custom (numpy)</p>
+                        <div class="photo-frame"><img src="./media/p11_dy_custom.jpg" alt="Dy custom convolution"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">scipy.signal.convolve2d</p>
+                        <div class="photo-frame"><img src="./media/p11_dy_scipy.jpg" alt="Dy scipy convolution"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Gradient magnitude</h3>
+                </div>
+                <div class="comparison">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Custom (numpy)</p>
+                        <div class="photo-frame"><img src="./media/p11_magnitude_custom.jpg" alt="Gradient magnitude custom"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">scipy.signal.convolve2d</p>
+                        <div class="photo-frame"><img src="./media/p11_magnitude_scipy.jpg" alt="Gradient magnitude scipy"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>9x9 box filter</h3>
+                </div>
+                <div class="comparison">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Custom (numpy)</p>
+                        <div class="photo-frame"><img src="./media/p11_box_custom.jpg" alt="Box filter custom"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">scipy.signal.convolve2d</p>
+                        <div class="photo-frame"><img src="./media/p11_box_scipy.jpg" alt="Box filter scipy"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="part-explanation">
+                <p>I implemented two versions of convolution with NumPy alone. The first involves four nested loops to calculate each output element. The input image gets zero padded by half the kernel size on each side and the kernel gets flipped, turning the computation into an actual convolution instead of correlation. Then, the kernel gets multiplied against each patch of the image in the same manner and summed to generate each output pixel.</p>
+                <p>The second implementation is essentially identical to the first. But it substitutes two inner loops for a dot product calculation with NumPy. Specifically, it flattens both the patch of the image and kernel and multiplies the resulting vectors.</p>
+                <p>To test the correctness of these approaches, I convolved my grayscale selfie using D<sub>x</sub>=(1,0,&minus;1) and D<sub>y</sub>=D<sub>x</sub><sup>T</sup> finite difference operators, as well as a 9&times;9 box filter kernel. Then I compared the convolution results against scipy.signal.convolve2d with mode=same. As expected, all three calculations yielded identical numerical results, with discrepancies smaller than 10<sup>&minus;13</sup>, which amount to rounding errors. Their visualization is visually indistinguishable too.</p>
+                <p>There is a noticeable performance gap, however. The four-loop implementation finished convolution of the cropped portion with the 9&times;9 kernel in 1.87 seconds, while the two-loop approach required 0.125 seconds and scipy only 0.011 seconds. Scaling these numbers linearly to the whole image suggests timings of 110 seconds, 7 seconds, and under a second respectively. Such drastic speedup with the former version comes due to the fact that NumPy implements multiplication and summation operations in compiled C-code rather than interpreted Python. The latter achieves better efficiency by running the entire convolution internally in compiled code instead of Python loops. Yet with small kernels of size 1&times;3, the computational cost of the two-loop approach becomes comparable to that of the four-loop approach rather than scipy, since the number of multiplications and sums decreases drastically.</p>
+                <p>Both implementations use zero padding by default. This padding type matches scipy's default boundary='fill' mode with a fillvalue of zero. This choice produces consistent behavior between my implementations and scipy. Zero-padding assumes that pixels outside the image boundary are completely black. As a consequence, my implementations detect spurious edges along the perimeter of the original picture. While scipy also generates artifacts at the boundaries, it offers other fill options that avoid zero artifacts altogether.</p>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 1.2</span>
+                <h2>Finite Difference Operator</h2>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Partial derivatives and gradient magnitude</h3>
+                </div>
+                <div class="plate-row two">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Original</p>
+                        <div class="photo-frame"><img src="./media/p12_cameraman.jpg" alt="Cameraman original"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Gradient magnitude</p>
+                        <div class="photo-frame"><img src="./media/p12_magnitude.jpg" alt="Cameraman gradient magnitude"></div>
+                    </div>
+                </div>
+                <div class="plate-row two">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Partial derivative in x</p>
+                        <div class="photo-frame"><img src="./media/p12_dx.jpg" alt="Cameraman Dx"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Partial derivative in y</p>
+                        <div class="photo-frame"><img src="./media/p12_dy.jpg" alt="Cameraman Dy"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Binarized edges</h3>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Threshold 30</p>
+                        <div class="photo-frame"><img src="./media/p12_edges_30.jpg" alt="Edges threshold 30"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Threshold 40 (chosen)</p>
+                        <div class="photo-frame"><img src="./media/p12_edges_40.jpg" alt="Edges threshold 40"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Threshold 50</p>
+                        <div class="photo-frame"><img src="./media/p12_edges_50.jpg" alt="Edges threshold 50"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="part-explanation">
+                <p>As part of the finite difference operator assignment, I estimated the gradients of my grayscale cameraman image using convolution with D<sub>x</sub>=(1,0,&minus;1) and D<sub>y</sub>=D<sub>x</sub><sup>T</sup>.</p>
+                <p>I visualized the gradient image by shifting and scaling each component to span a range centered around zero, assigning negative values darker tones. Then I calculated the magnitude of the gradient vector field as</p>
+                <p class="equation">&radic;(D<sub>x</sub><sup>2</sup> + D<sub>y</sub><sup>2</sup>)</p>
+                <p>This result was further rescaled so that the highest magnitude corresponds to the maximum pixel intensity, which ensures that the strongest edge appears white.</p>
+                <p>From the above image, the next step is generating an edge binary map. This process entails identifying each pixel whose gradient magnitude exceeds the chosen threshold and coloring it as white. Otherwise, each pixel will receive black color. I tested five thresholds 30, 35, 40, 45, and 50 and concluded that 40 provided a good compromise. The resulting edges retain outline contours of the man, camera, and tripod while eliminating most of the grass noise. At 50, the grass looks neater. Some portions of the legs of tripod and the outline of the man's coat, however, get lost.</p>
+                <p>At threshold 40, there is one notable drawback. Though most grass noise gets eliminated, low contrast background elements such as the buildings behind the trees fade from the image.</p>
+                <p>Another disadvantage of my implementation concerns visualization of the edge image itself. Since I used zero padding, it assumed that there is an infinitely long black line at the image edge. This assumption caused the detection of fake edges along the image borders.</p>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 1.3</span>
+                <h2>Derivative of Gaussian (DoG) Filter</h2>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Filters</h3>
+                </div>
+                <div class="plate-row pixelated">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Gaussian (13x13, σ = 2)</p>
+                        <div class="photo-frame"><img src="./media/p13_gaussian_filter.png" alt="Gaussian filter"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">DoG in x</p>
+                        <div class="photo-frame"><img src="./media/p13_dog_filter_x.png" alt="DoG filter x"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">DoG in y</p>
+                        <div class="photo-frame"><img src="./media/p13_dog_filter_y.png" alt="DoG filter y"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Blur, then finite difference</h3>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Gaussian blurred</p>
+                        <div class="photo-frame"><img src="./media/p13_blurred.jpg" alt="Blurred cameraman"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Gradient magnitude</p>
+                        <div class="photo-frame"><img src="./media/p13_blurred_magnitude.jpg" alt="Blurred gradient magnitude"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Edges (threshold 40)</p>
+                        <div class="photo-frame"><img src="./media/p13_blurred_edges.jpg" alt="Blurred edges"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Single DoG convolution</h3>
+                </div>
+                <div class="comparison">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Gradient magnitude</p>
+                        <div class="photo-frame"><img src="./media/p13_dog_magnitude.jpg" alt="DoG gradient magnitude"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Edges (threshold 40)</p>
+                        <div class="photo-frame"><img src="./media/p13_dog_edges.jpg" alt="DoG edges"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Finite difference vs Gaussian smoothing</h3>
+                </div>
+                <div class="comparison">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Finite difference only</p>
+                        <div class="photo-frame"><img src="./media/p12_edges_40.jpg" alt="Finite difference edges"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">With Gaussian smoothing</p>
+                        <div class="photo-frame"><img src="./media/p13_dog_edges.jpg" alt="Smoothed edges"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="part-explanation">
+                <p>I built a 2D Gaussian function by calculating the outer product of two copies of the 1D Gaussian obtained with cv2.getGaussianKernel. The Gaussian used &sigma;=2 and had a 13&times;13 kernel. A window of size roughly 6&sigma; covers almost the entire useful part of the Gaussian weighting distribution.</p>
+                <p>Firstly, I blurred the cameraman image with the Gaussian and applied finite difference gradient estimation as specified in Part 1.2. The edges became noticeably thicker, smoother, and continuous. Moreover, unlike the previous attempt, my implementation connected the outlines of the coat and tripod legs rather than cutting them. Also, most grass noise got filtered out by virtue of averaging out high frequency variations of pixel intensities prior to differentiation.</p>
+                <p>One important disadvantage is that many low-contrast details disappeared. The background buildings became less visible, and edges got smeared into several pixels in width instead of appearing highly localized.</p>
+                <p>Since convolution operation is associative, convolution of the Gaussian-blurred image with finite difference operators should be equivalent to application of a single derivative of Gaussian (DoG) to the original image. To find those filters, I performed full-mode convolution of the Gaussian with D<sub>x</sub> and D<sub>y</sub>.</p>
+                <p>These filters have a size of 13&times;15 and 15&times;13 pixels respectively. They each feature a peak adjacent to a trough in one direction, resembling finite differences. I plotted the two kernels, enlarging them so that each filter element appears as a visible block of pixels. Middle-gray indicates zero filter response.</p>
+                <p>When applying these filters directly to the cameraman image, the outcome almost perfectly matches the gradient of the pre-blurred version. There is a subtle discrepancy, however, in a narrow strip near the edges due to different padding behavior of the two processes. Here, I adjusted the magnitude scales of the two gradient estimates to match and chose the same threshold 40.</p>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 2.1</span>
+                <h2>Image Sharpening</h2>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Taj Mahal</h3>
+                </div>
+                <div class="plate-row four">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Original</p>
+                        <div class="photo-frame"><img src="./media/p21_taj.jpg" alt="Taj original"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Blurred</p>
+                        <div class="photo-frame"><img src="./media/p21_taj_blurred.jpg" alt="Taj blurred"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">High frequencies</p>
+                        <div class="photo-frame"><img src="./media/p21_taj_high_frequency.jpg" alt="Taj high frequencies"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Sharpened (α = 1)</p>
+                        <div class="photo-frame"><img src="./media/p21_taj_sharpened.jpg" alt="Taj sharpened"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Varying the sharpening amount</h3>
+                </div>
+                <div class="plate-row five">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Original</p>
+                        <div class="photo-frame"><img src="./media/p21_taj_alpha_original.jpg" alt="Taj original"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">α = 0.5</p>
+                        <div class="photo-frame"><img src="./media/p21_taj_alpha_0_5.jpg" alt="Taj alpha 0.5"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">α = 1</p>
+                        <div class="photo-frame"><img src="./media/p21_taj_alpha_1.jpg" alt="Taj alpha 1"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">α = 2</p>
+                        <div class="photo-frame"><img src="./media/p21_taj_alpha_2.jpg" alt="Taj alpha 2"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">α = 4</p>
+                        <div class="photo-frame"><img src="./media/p21_taj_alpha_4.jpg" alt="Taj alpha 4"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Selfie</h3>
+                </div>
+                <div class="plate-row four">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Original</p>
+                        <div class="photo-frame"><img src="./media/p21_selfie.jpg" alt="Selfie original"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Blurred</p>
+                        <div class="photo-frame"><img src="./media/p21_selfie_blurred.jpg" alt="Selfie blurred"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">High frequencies</p>
+                        <div class="photo-frame"><img src="./media/p21_selfie_high_frequency.jpg" alt="Selfie high frequencies"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Sharpened (α = 2)</p>
+                        <div class="photo-frame"><img src="./media/p21_selfie_sharpened.jpg" alt="Selfie sharpened"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Evaluation: blur a sharp image, then sharpen it</h3>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Original</p>
+                        <div class="photo-frame"><img src="./media/p21_cameraman_original.jpg" alt="Cameraman original"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Blurred</p>
+                        <div class="photo-frame"><img src="./media/p21_cameraman_blurred.jpg" alt="Cameraman blurred"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Resharpened (α = 2)</p>
+                        <div class="photo-frame"><img src="./media/p21_cameraman_resharpened.jpg" alt="Cameraman resharpened"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="part-explanation">
+                <p>Unsharp masking can be seen as separating high- and low-frequency contents of an image. The Gaussian filter operates as a low-pass filter retaining large-scale features. Thus, subtraction of the filtered image from the input image isolates the remaining high-frequency components, namely edges, texture, and fine-scale details. Addition of such a high-pass image to the input amplifies those elements and sharpens the overall image.</p>
+                <p>Alternatively, the operation may be represented as a single convolution. If the input image is denoted by f, the unit impulse e, and the Gaussian kernel g, then</p>
+                <p class="equation">f + &alpha;(f &minus; f &lowast; g) = f &lowast; e + &alpha;(f &lowast; e &minus; f &lowast; g) = f &lowast; ((1 + &alpha;)e &minus; &alpha;g)</p>
+                <p>Thus, the unsharp-mask operator equals (1 + &alpha;)e &minus; &alpha;g. I verified my implementation against separate applications of Gaussian blur, high-pass filtering via subtraction of blur, and addition to the original image using convolution.</p>
+                <p>To perform unsharp masking on colored images, I used 9&times;9 Gaussian filter kernel with &sigma;=1.5. Then I clipped the output back to the range 0-255.</p>
+                <p>The high-frequency components, however, contain negative values, which would get clipped if the image were converted back to the range 0-255 too early. Therefore, I kept all intermediate values in floating point, and in order to visualize the high-frequency images, I shifted them so that zero appears as middle gray. The contrast of the results is amplified artificially for demonstration purposes.</p>
+                <p>Adjustment of &alpha; reveals the effect of increasingly stronger sharpening. With &alpha;=0.5 and &alpha;=1, high-frequency features of the buildings, such as carved domes, arches, and tree leaves, become evident without looking heavily modified. At &alpha;=2, the effect of sharpening becomes obvious. At &alpha;=4, however, prominent bright halos emerge next to some prominent high-frequency components, including the minaret domes and tree tops. Moreover, low-frequency components of the sky and road surface show graininess due to amplification of high-frequency noise.</p>
+                <p>In the case of my selfie, the choice of optimal parameter seems to be &alpha;=2. Such sharpening highlights hair, beard, eyes, and window frames. It amplifies facial texture and causes slight bright halos where the hair meets the wall.</p>
+                <p>To check the effect of sharpening further, I applied unsharp masking to a blurred version of the cameraman image with &alpha;=2. Comparing root mean squared error between each pixel and original, blurring caused by a Gaussian filter with &sigma;=1.5 resulted in an error of 7.95 while subsequent sharpening reduced the number to 5.16. The major edges, such as the coat, tripod, and camera, became noticeably crisper after sharpening.</p>
+                <p>There is one crucial limitation of unsharp masking, nevertheless. It can only amplify existing edges and features, but not recover lost high-frequency information from a blurred image. Indeed, the fine grass texture and background building details that got erased in previous blur remain absent in the result of sharpening.</p>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 2.2</span>
+                <h2>Hybrid Images</h2>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Favorite: Selfie + Lion (full process)</h3>
+                </div>
+                <div class="comparison">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Original (low frequency)</p>
+                        <div class="photo-frame"><img src="./media/p22_selfie_original.jpg" alt="Selfie original"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Original (high frequency)</p>
+                        <div class="photo-frame"><img src="./media/p22_lion_original.jpg" alt="Lion original"></div>
+                    </div>
+                </div>
+                <div class="plate-row five">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Aligned selfie</p>
+                        <div class="photo-frame"><img src="./media/p22_selfie_lion_low_input.jpg" alt="Aligned selfie"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Aligned lion</p>
+                        <div class="photo-frame"><img src="./media/p22_selfie_lion_high_input.jpg" alt="Aligned lion"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Low pass (σ = 12)</p>
+                        <div class="photo-frame"><img src="./media/p22_selfie_lion_low_passed.jpg" alt="Low passed selfie"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">High pass (σ = 4)</p>
+                        <div class="photo-frame"><img src="./media/p22_selfie_lion_high_passed.jpg" alt="High passed lion"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Hybrid</p>
+                        <div class="photo-frame"><img src="./media/p22_selfie_lion_hybrid.jpg" alt="Selfie lion hybrid"></div>
+                    </div>
+                </div>
+                <div class="plate-row five">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">FFT selfie</p>
+                        <div class="photo-frame"><img src="./media/p22_selfie_lion_fft_low_input.jpg" alt="FFT selfie"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">FFT lion</p>
+                        <div class="photo-frame"><img src="./media/p22_selfie_lion_fft_high_input.jpg" alt="FFT lion"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">FFT low pass</p>
+                        <div class="photo-frame"><img src="./media/p22_selfie_lion_fft_low_passed.jpg" alt="FFT low passed"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">FFT high pass</p>
+                        <div class="photo-frame"><img src="./media/p22_selfie_lion_fft_high_passed.jpg" alt="FFT high passed"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">FFT hybrid</p>
+                        <div class="photo-frame"><img src="./media/p22_selfie_lion_fft_hybrid.jpg" alt="FFT hybrid"></div>
+                    </div>
+                </div>
+                <div class="pyramid-result">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Hybrid at decreasing sizes (simulating distance)</p>
+                        <div class="photo-frame"><img src="./media/p22_selfie_lion_multiscale.jpg" alt="Selfie lion hybrid multiscale"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Derek + Nutmeg</h3>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Derek (low frequency)</p>
+                        <div class="photo-frame"><img src="./media/p22_derek_original.jpg" alt="Derek original"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Nutmeg (high frequency)</p>
+                        <div class="photo-frame"><img src="./media/p22_nutmeg_original.jpg" alt="Nutmeg original"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Hybrid</p>
+                        <div class="photo-frame"><img src="./media/p22_derek_nutmeg_hybrid.jpg" alt="Derek Nutmeg hybrid"></div>
+                    </div>
+                </div>
+                <div class="pyramid-result">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Hybrid at decreasing sizes</p>
+                        <div class="photo-frame"><img src="./media/p22_derek_nutmeg_multiscale.jpg" alt="Derek Nutmeg multiscale"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Lion + Tiger</h3>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Lion (low frequency)</p>
+                        <div class="photo-frame"><img src="./media/p22_lion_original.jpg" alt="Lion original"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Tiger (high frequency)</p>
+                        <div class="photo-frame"><img src="./media/p22_tiger_original.jpg" alt="Tiger original"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Hybrid</p>
+                        <div class="photo-frame"><img src="./media/p22_lion_tiger_hybrid.jpg" alt="Lion tiger hybrid"></div>
+                    </div>
+                </div>
+                <div class="pyramid-result">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Hybrid at decreasing sizes</p>
+                        <div class="photo-frame"><img src="./media/p22_lion_tiger_multiscale.jpg" alt="Lion tiger multiscale"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="part-explanation">
+                <p>Hybrid images rely on perception of high spatial frequencies at close distances versus low frequencies from afar.</p>
+                <p>I employed the code provided to align faces in pairs of images. Firstly, I clicked on both pairs of eyes in the images and transformed one to match the face orientation. Then I applied low-pass Gaussian filter to one of the faces and generated a complementary high-pass version of another one. Their addition yields a hybrid.</p>
+                <p>Of the various combinations of hybrid images, I particularly like the selfie vs lion hybrid. It clearly shows how low and high frequencies interact. Namely, the Fourier transform reveals distinct frequency distributions. The low-pass face occupies primarily central frequencies. High-pass filter cuts out frequencies around the origin, leaving mostly high frequencies.</p>
+                <p>Horizontal and vertical lines observable in Fourier spectra represent the image boundary artifacts due to circular convolution properties.</p>
+                <p>I experimented extensively with the parameters before finding the best settings. In my case, the selfie received a low-pass filter with &sigma;=12. Meanwhile, the lion image was high-passed using &sigma;=4. Approximately speaking, this choice of &sigma; corresponds to cutoff frequencies of 1/(2&pi;&sigma;) and amounts to 0.013 and 0.04 cycles per pixel for selfie and lion images respectively. A lower value of &sigma; in the case of the selfie preserves too many facial features that compete with the lion appearance in close proximity. An excessively large &sigma; would turn the selfie image into featureless blobs. For the lion image, &sigma;=4 maintains essential details such as the whiskers, fur, and eye contours.</p>
+                <p>For the Derek and Nutmeg hybrid, I used &sigma;=(6,3). Here, the face alignment caused Derek's face to be relatively small compared to Nutmeg, so greater blurring would render him invisible.</p>
+                <p>In the last example, &sigma;=(8,2). A higher &sigma; in the case of tiger caused it to maintain larger scale stripes rather than fine details only. In other words, &sigma;=2 retained mostly stripe boundaries and whisker features, whereas the lion preserved mainly low-frequency patterns.</p>
+                <p>I notice black triangles along the boundary lines of hybrids after alignment, which arise because of rotations applied for alignment and zero padding thereafter.</p>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 2.3</span>
+                <h2>Gaussian and Laplacian Stacks</h2>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Apple stacks (Gaussian top, Laplacian bottom)</h3>
+                </div>
+                <div class="photo-frame wide-media"><img src="./media/p23_apple_stacks.jpg" alt="Apple Gaussian and Laplacian stacks"></div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Orange stacks (Gaussian top, Laplacian bottom)</h3>
+                </div>
+                <div class="photo-frame wide-media"><img src="./media/p23_orange_stacks.jpg" alt="Orange Gaussian and Laplacian stacks"></div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Recreating Figure 3.42 (a) through (l)</h3>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">(a) Apple, level 0</p>
+                        <div class="photo-frame"><img src="./media/p23_fig_0_apple.jpg" alt="Apple level 0"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">(b) Orange, level 0</p>
+                        <div class="photo-frame"><img src="./media/p23_fig_0_orange.jpg" alt="Orange level 0"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">(c) Blend, level 0</p>
+                        <div class="photo-frame"><img src="./media/p23_fig_0_blend.jpg" alt="Blend level 0"></div>
+                    </div>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">(d) Apple, level 2</p>
+                        <div class="photo-frame"><img src="./media/p23_fig_2_apple.jpg" alt="Apple level 2"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">(e) Orange, level 2</p>
+                        <div class="photo-frame"><img src="./media/p23_fig_2_orange.jpg" alt="Orange level 2"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">(f) Blend, level 2</p>
+                        <div class="photo-frame"><img src="./media/p23_fig_2_blend.jpg" alt="Blend level 2"></div>
+                    </div>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">(g) Apple, level 4</p>
+                        <div class="photo-frame"><img src="./media/p23_fig_4_apple.jpg" alt="Apple level 4"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">(h) Orange, level 4</p>
+                        <div class="photo-frame"><img src="./media/p23_fig_4_orange.jpg" alt="Orange level 4"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">(i) Blend, level 4</p>
+                        <div class="photo-frame"><img src="./media/p23_fig_4_blend.jpg" alt="Blend level 4"></div>
+                    </div>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">(j) Apple, collapsed</p>
+                        <div class="photo-frame"><img src="./media/p23_fig_collapsed_apple.jpg" alt="Apple collapsed"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">(k) Orange, collapsed</p>
+                        <div class="photo-frame"><img src="./media/p23_fig_collapsed_orange.jpg" alt="Orange collapsed"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">(l) Oraple</p>
+                        <div class="photo-frame"><img src="./media/p23_fig_collapsed_blend.jpg" alt="Oraple"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="part-explanation">
+                <p>I implemented Laplacian and Gaussian stacks. A stack, unlike a pyramid, does not reduce the resolution of images at each level. As a consequence, each image remains of original dimensions.</p>
+                <p>For Gaussian stacks, I iteratively convolved the image with increasingly broad Gaussian filter kernels. Specifically, I applied the Gaussians with sigmas 2, 4, 8, and 16. Effectively, this means progressively removing high frequencies from the original image.</p>
+                <p>A Laplacian difference between any two successive images constitutes one band of spatial frequencies. Finally, I verified numerically that their sum reconstructs the initial image to within approximately 10<sup>&minus;14</sup>.</p>
+                <p>Following example 3.42 from the book, I calculated masked Gaussian and Laplacian stacks. In this example, the mask has a constant step value of 1 on the left side and 0 on the right. The other images are simply the apple and orange.</p>
+                <p>This figure displays levels 0, 2, and 4 of masked images and their sum, the result after adding all masked Laplacian levels.</p>
+                <p>Indeed, high frequency mask produces distinct edges between apple/orange, whereas lower frequency levels blend smoothly along the boundary.</p>
+                <p>To prepare visualization, I re-normalized the laplacian differences into the range 0 to 255 because each image contained positive and negative values.</p>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 2.4</span>
+                <h2>Multiresolution Blending</h2>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Oraple (vertical seam)</h3>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Apple</p>
+                        <div class="photo-frame"><img src="./media/p24_apple.jpg" alt="Apple"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Orange</p>
+                        <div class="photo-frame"><img src="./media/p24_orange.jpg" alt="Orange"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Oraple</p>
+                        <div class="photo-frame"><img src="./media/p24_oraple.jpg" alt="Oraple"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Liger (vertical seam)</h3>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Lion</p>
+                        <div class="photo-frame"><img src="./media/p24_liger_lion.jpg" alt="Aligned lion"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Tiger</p>
+                        <div class="photo-frame"><img src="./media/p24_liger_tiger.jpg" alt="Aligned tiger"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Liger</p>
+                        <div class="photo-frame"><img src="./media/p24_liger_liger.jpg" alt="Liger blend"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Tiger eyes (irregular mask)</h3>
+                </div>
+                <div class="plate-row four">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Tiger</p>
+                        <div class="photo-frame"><img src="./media/p24_tiger_eyes_a.jpg" alt="Aligned tiger"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Selfie</p>
+                        <div class="photo-frame"><img src="./media/p24_tiger_eyes_b.jpg" alt="Aligned selfie"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Mask</p>
+                        <div class="photo-frame"><img src="./media/p24_tiger_eyes_mask.jpg" alt="Eyes mask"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Blend</p>
+                        <div class="photo-frame"><img src="./media/p24_tiger_eyes_blend.jpg" alt="Tiger eyes blend"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Favorite: Selfie in a lion's mane (irregular mask)</h3>
+                </div>
+                <div class="plate-row four">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Selfie</p>
+                        <div class="photo-frame"><img src="./media/p24_selfie_in_lion_a.jpg" alt="Aligned selfie"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Lion</p>
+                        <div class="photo-frame"><img src="./media/p24_selfie_in_lion_b.jpg" alt="Aligned lion"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Mask</p>
+                        <div class="photo-frame"><img src="./media/p24_selfie_in_lion_mask.jpg" alt="Face mask"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Blend</p>
+                        <div class="photo-frame"><img src="./media/p24_selfie_in_lion_blend.jpg" alt="Selfie in lion blend"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Laplacian stack of the favorite (as in Figure 10)</h3>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Selfie, level 0</p>
+                        <div class="photo-frame"><img src="./media/p24_fig_0_selfie.jpg" alt="Selfie level 0"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Lion, level 0</p>
+                        <div class="photo-frame"><img src="./media/p24_fig_0_lion.jpg" alt="Lion level 0"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Blend, level 0</p>
+                        <div class="photo-frame"><img src="./media/p24_fig_0_blend.jpg" alt="Blend level 0"></div>
+                    </div>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Selfie, level 2</p>
+                        <div class="photo-frame"><img src="./media/p24_fig_2_selfie.jpg" alt="Selfie level 2"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Lion, level 2</p>
+                        <div class="photo-frame"><img src="./media/p24_fig_2_lion.jpg" alt="Lion level 2"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Blend, level 2</p>
+                        <div class="photo-frame"><img src="./media/p24_fig_2_blend.jpg" alt="Blend level 2"></div>
+                    </div>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Selfie, level 4</p>
+                        <div class="photo-frame"><img src="./media/p24_fig_4_selfie.jpg" alt="Selfie level 4"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Lion, level 4</p>
+                        <div class="photo-frame"><img src="./media/p24_fig_4_lion.jpg" alt="Lion level 4"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Blend, level 4</p>
+                        <div class="photo-frame"><img src="./media/p24_fig_4_blend.jpg" alt="Blend level 4"></div>
+                    </div>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Masked selfie</p>
+                        <div class="photo-frame"><img src="./media/p24_fig_collapsed_selfie.jpg" alt="Masked selfie"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Masked lion</p>
+                        <div class="photo-frame"><img src="./media/p24_fig_collapsed_lion.jpg" alt="Masked lion"></div>
+                    </div>
+                    <div class="photo-card">
+                        <p class="photo-caption caption-after">Final blend</p>
+                        <div class="photo-frame"><img src="./media/p24_fig_collapsed_blend.jpg" alt="Final blend"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="part-explanation">
+                <p>To implement multiresolution blending, I employed a Gaussian stack of mask and Laplacian stacks of two images being combined. For the algorithm, I employed the stack-based version described on p. 230. It avoids intermediate steps of downsampling and upsampling of the images.</p>
+                <p>At each level of resolution, I calculated weighted sum of Laplacian components.</p>
+                <p class="equation">M<sub>i</sub> L<sub>A,i</sub> + (1 &minus; M<sub>i</sub>) L<sub>B,i</sub></p>
+                <p>where M<sub>i</sub> represents a gaussian-blurred mask image at the i-th level of resolution.</p>
+                <p>Summing weighted Laplacian components reconstructs the final image. I created six levels of resolution starting with sigma 2. For my personal image pairs, I prealigned images using point-selection code provided by the course staff.</p>
+                <p>I applied a vertical step mask separating my lion and tiger photos into halves. Multiresolution blending greatly softened edges between lion's and tiger's faces around the nose. While high-frequency components of the image show rapid transition of texture, low frequency elements transition smoothly over a wide region.</p>
+                <p>Additionally, I experimented with custom-shaped masks to blend specific regions. For instance, I wanted to blend my eye region with tiger's eyes. Thus, the mask consisted of two small ellipses. Another example included face-blending where I placed my face inside the face and mane of a lion. This task involved a large ellipse.</p>
+                <p>Visual inspection of Laplacian differences of face-and-manes example revealed the behavior of multiresolution blending algorithm. High-frequency level 0 mask is still sharp, so fine features such as beard hair and fur textures transition abruptly along a few pixels around the mask edge. Coarse features such as skin tone and fur colors gradually vary across the whole mask region in levels 4.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Divit Chopra · UC Berkeley</p>
+    </footer>
+</body>
+</html>
