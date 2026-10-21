@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project 3 — CS180 Portfolio</title>
+    <link rel="stylesheet" href="../style.css?v=3">
+</head>
+<body>
+    <main class="project-page">
+        <a class="back-link" href="../index.html">← Back to portfolio</a>
+
+        <header class="project-header">
+            <h1>Project 3</h1>
+            <p class="subtitle">Fun with Flow Models · Parts A and B</p>
+        </header>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 1.1</span>
+                <h2>Constructing Noisy Training Inputs</h2>
+            </div>
+            <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/training_inputs.png" alt="Original car and noisy versions at t = 0.25, 0.50, and 0.75"></div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 1.2</span>
+                <h2>Classical Denoising</h2>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>t = 0.25</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/blur_0.25.png" alt="Noisy car at t = 0.25 and its Gaussian blur"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>t = 0.50</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/blur_0.5.png" alt="Noisy car at t = 0.50 and blur with sigma 4"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>t = 0.75</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/blur_0.75.png" alt="Noisy car at t = 0.75 and its Gaussian blur"></div>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 1.3</span>
+                <h2>One-Step Denoising</h2>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>t = 0.25</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/one_step_0.25.png" alt="Original, noisy, and one-step estimate at t = 0.25"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>t = 0.50</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/one_step_0.5.png" alt="Original, noisy, and one-step estimate at t = 0.50"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>t = 0.75</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/one_step_0.75.png" alt="Original, noisy, and one-step estimate at t = 0.75"></div>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 1.4</span>
+                <h2>Visualizing Velocity</h2>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Original</h3></div>
+                <div class="single-media">
+                    <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/velocity_original.png" alt="Original car used for velocity comparison"></div>
+                </div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>t = 0.25</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/velocity_0.25.png" alt="Predicted update, ground-truth update, and error at t = 0.25"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>t = 0.50</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/velocity_0.50.png" alt="Predicted update, ground-truth update, and error at t = 0.50"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>t = 0.75</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/velocity_0.75.png" alt="Predicted update, ground-truth update, and error at t = 0.75"></div>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 1.5</span>
+                <h2>Iterative Denoising with Euler Sampling</h2>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>From t = 0.50 to t = 1</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/trajectory.png" alt="Euler trajectory of the car from t = 0.50 to t = 1"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Blur, one step, and Euler</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/comparison.png" alt="Original car compared with blur, one-step, and Euler results"></div>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 1.6</span>
+                <h2>Generating Images from Noise</h2>
+            </div>
+            <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/conditional_samples.png" alt="Five samples from noise, seeds 180 to 184"></div>
+            <div class="part-explanation">
+                <p>I started out by generating five images from Gaussian noise using forward Euler integration, starting with prompt “a high quality photo” using stepsizes of h=0.02. Every seed turned into an anthropomorphic representation of people due to the vagueness of my prompt, with lacking guidance resulting in poor definition, especially when t approaches 1. Seed 180 displays melting jaw bones while seed 181 shows neck muscles appearing overly stretched and creased.</p>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 2.1</span>
+                <h2>Classifier-Free Guidance</h2>
+            </div>
+            <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/cfg_samples.png" alt="Five guided samples at w = 7, seeds 180 to 184"></div>
+            <div class="part-explanation">
+                <p>To implement guidance I modified my sampling code as per the suggested equation to use v<sub>c</sub> + w(v<sub>c</sub> − v<sub>u</sub>). Here, v<sub>c</sub> is the velocity derived from the text prompt and v<sub>u</sub> refers to a null-string prompt. I repeated sampling from Gaussian noise using seeds 180-184 but now added CFG guidance w=7. As expected, the facial features became much tighter compared to previous results, with jaw bone of seed 180 becoming well-defined. The entire series takes form resembling portrait photographs.</p>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 3.1</span>
+                <h2>Image-to-Image Editing</h2>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Campanile</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/edit_campanile.png" alt="Campanile edits at seven starting times"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Car</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/edit_my_image_1.png" alt="Car edits at seven starting times"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Bicycle</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/edit_my_image_2.png" alt="Bicycle edits at seven starting times"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Web image</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/edit_web_image.png" alt="Web photo edits at seven starting times"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Face drawing</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/edit_drawing_1.png" alt="Face drawing edits at seven starting times"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Landscape drawing</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/edit_drawing_2.png" alt="Landscape drawing edits at seven starting times"></div>
+            </div>
+
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 3.2</span>
+                <h2>Text-Guided Image Editing</h2>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Campanile → Salesforce Tower</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/text_edit_campanile.png" alt="Campanile edited toward a Salesforce Tower skyline"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Car → Jack in the Box</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/text_edit_my_image_1.png" alt="Car edited toward a Jack in the Box figure"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Bicycle → Yosemite</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/text_edit_my_image_2.png" alt="Bicycle edited toward a Yosemite view"></div>
+            </div>
+            <div class="part-explanation">
+                <p>I used the same editing procedure, with a different prompt on each image.</p>
+                <p>For the Campanile the prompt was “a picture of the salesforce tower rising above SF skyline”. At t<sub>start</sub>=0.02 the Campanile was substituted with the Salesforce Tower towering above the ambigious facade of a city. By t<sub>start</sub>=0.50 the building returns back to its original state.</p>
+                <p>For the car the prompt was “jack in the box fast food motto guy”. At t<sub>start</sub>=0.02 this resulted in a strange cartoon face with letterings printed on it. The car was reconstructed around t<sub>start</sub>=0.25.</p>
+                <p>For the bicycle the prompt was “a view of yosemite”. At t<sub>start</sub>=0.02 the bicycle rims were converted into a mountain landscape. By t<sub>start</sub>=0.04 the wheels already had mountain landscape paintings inside, and the image restored itself back to the original picture near t<sub>start</sub>=0.50.</p>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 3.3</span>
+                <h2>Visual Anagrams</h2>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Old man / campfire</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/anagram_views_0.png" alt="Oil painting that reads as an old man upright and a campfire when rotated"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Village / horse</h3></div>
+                <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/anagram_views_1.png" alt="Lithograph that reads as a snowy village upright and a horse when rotated"></div>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 3.4</span>
+                <h2>Hybrid Images</h2>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Waterfall up close, skull far away</h3></div>
+                <div class="hybrid-pair">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Full size</p>
+                        <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/hybrid_0.png" alt="Hybrid image, full size, reading as a waterfall"></div>
+                    </div>
+                    <div class="photo-card distant-card">
+                        <p class="photo-caption caption-after">64×64</p>
+                        <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/hybrid_0_distant.png" alt="Same hybrid shown at 64 by 64"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Forest up close, cat far away</h3></div>
+                <div class="hybrid-pair">
+                    <div class="photo-card">
+                        <p class="photo-caption caption-before">Full size</p>
+                        <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/hybrid_1.png" alt="Hybrid image, full size, reading as a forest"></div>
+                    </div>
+                    <div class="photo-card distant-card">
+                        <p class="photo-caption caption-after">64×64</p>
+                        <div class="photo-frame"><img src="./results/parta_updated/20261021-022111-632ce4/hybrid_1_distant.png" alt="Same hybrid shown at 64 by 64"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part B</span>
+                <h2>Flow Matching from Scratch</h2>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 1.2</span>
+                <h2>Noisy Training Inputs</h2>
+            </div>
+            <div class="photo-frame"><img src="./results%202/partb/all/noisy_levels.png" alt="Ten MNIST digits at noise levels from sigma 0 to 1"></div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 1.2.1</span>
+                <h2>Training the Denoiser</h2>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Training loss</h3></div>
+                <div class="photo-frame"><img src="./results%202/partb/all/denoiser_loss.png" alt="Denoiser training loss over optimizer steps"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Epoch 1</h3></div>
+                <div class="photo-frame"><img src="./results%202/partb/all/denoise_epoch_1.png" alt="Clean, noisy, and denoised test digits after one epoch"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Epoch 5</h3></div>
+                <div class="photo-frame"><img src="./results%202/partb/all/denoise_epoch_5.png" alt="Clean, noisy, and denoised test digits after five epochs"></div>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 1.2.2</span>
+                <h2>Out-of-Distribution Testing</h2>
+            </div>
+            <div class="photo-frame"><img src="./results%202/partb/all/ood_denoising.png" alt="Denoised test digits at sigma 0 through 1"></div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 1.2.3</span>
+                <h2>Denoising Pure Noise</h2>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Training loss</h3></div>
+                <div class="photo-frame"><img src="./results%202/partb/all/pure_noise_loss.png" alt="Pure-noise denoiser training loss"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Epoch 1</h3></div>
+                <div class="photo-frame"><img src="./results%202/partb/all/pure_noise_epoch_1.png" alt="Outputs from pure noise after one epoch"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Epoch 5</h3></div>
+                <div class="photo-frame"><img src="./results%202/partb/all/pure_noise_epoch_5.png" alt="Outputs from pure noise after five epochs"></div>
+            </div>
+            <div class="part-explanation">
+                <p>I trained a fresh UNet for 5 epochs with my chosen hyperparameters (D=128, Learning Rate=1e-4, Batch Size=256). I inputted pure Gaussian noise and targeted a clean digit. After epoch 1 every sample is the same soft gray blob. After epoch 5 the blob is a little sharper but the samples are still almost identical. The inputted noise carries no information about the paired digit, causing MSE to drive every output towards the average training digit, which is depicted as one blurry central stroke.</p>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 2.2</span>
+                <h2>Training the Time-Conditioned UNet</h2>
+            </div>
+            <div class="photo-frame"><img src="./results%202/partb/all/time_conditioned_loss.png" alt="Time-conditioned flow matching loss"></div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 2.3</span>
+                <h2>Sampling from the Time-Conditioned UNet</h2>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Epoch 1</h3></div>
+                <div class="photo-frame"><img src="./results%202/partb/all/time_sample_epoch_1.png" alt="Time-conditioned samples after one epoch"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Epoch 5</h3></div>
+                <div class="photo-frame"><img src="./results%202/partb/all/time_sample_epoch_5.png" alt="Time-conditioned samples after five epochs"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Epoch 10</h3></div>
+                <div class="photo-frame"><img src="./results%202/partb/all/time_sample_epoch_10.png" alt="Time-conditioned samples after ten epochs"></div>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 2.5</span>
+                <h2>Training the Class-Conditioned UNet</h2>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>With the learning-rate schedule</h3></div>
+                <div class="photo-frame"><img src="./results%202/partb/all/class_conditioned_loss.png" alt="Class-conditioned training loss with the exponential schedule"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Constant learning rate</h3></div>
+                <div class="photo-frame"><img src="./results%202/partb/all/class_conditioned_no_scheduler_loss.png" alt="Class-conditioned training loss with a constant learning rate"></div>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part 2.6</span>
+                <h2>Sampling from the Class-Conditioned UNet</h2>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Scheduled, epoch 1</h3></div>
+                <div class="photo-frame"><img src="./results%202/partb/all/class_sample_epoch_1.png" alt="Four samples of each digit after one scheduled epoch"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Scheduled, epoch 5</h3></div>
+                <div class="photo-frame"><img src="./results%202/partb/all/class_sample_epoch_5.png" alt="Four samples of each digit after five scheduled epochs"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>Scheduled, epoch 10</h3></div>
+                <div class="photo-frame"><img src="./results%202/partb/all/class_sample_epoch_10.png" alt="Four samples of each digit after ten scheduled epochs"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>No schedule, epoch 1</h3></div>
+                <div class="photo-frame"><img src="./results%202/partb/all/class_nosched_epoch_1.png" alt="Four samples of each digit after one epoch without a schedule"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>No schedule, epoch 5</h3></div>
+                <div class="photo-frame"><img src="./results%202/partb/all/class_nosched_epoch_5.png" alt="Four samples of each digit after five epochs without a schedule"></div>
+            </div>
+            <div class="pyramid-example">
+                <div class="example-heading"><h3>No schedule, epoch 10</h3></div>
+                <div class="photo-frame"><img src="./results%202/partb/all/class_nosched_epoch_10.png" alt="Four samples of each digit after ten epochs without a schedule"></div>
+            </div>
+            <div class="part-explanation">
+                <p>Each grid is four samples of every digit from 0 through 9, drawn with 300 Euler steps. Each column displays its digit with unclear strokes post one epoch. Subsequently, the columns are readable as digits 0 through 9 by epoch 10. I left the non-scheduler run at a learning rate of 1e-2 for all 10 epochs. This resulted in readable digits with mild graininess.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Divit Chopra · UC Berkeley</p>
+    </footer>
+</body>
+</html>

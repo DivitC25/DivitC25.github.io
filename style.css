@@ -387,6 +387,47 @@ nav a:hover .nav-arrow {
     margin-bottom: 0;
 }
 
+.part-explanation ul {
+    margin: 0;
+    padding-left: 1.15rem;
+}
+
+.part-explanation li {
+    font-size: 0.95rem;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin-bottom: 0.4rem;
+}
+
+.part-explanation li:last-child {
+    margin-bottom: 0;
+}
+
+.hybrid-pair {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.hybrid-pair .photo-card:first-child {
+    flex: 1;
+    min-width: 0;
+}
+
+.distant-card {
+    width: 160px;
+    flex-shrink: 0;
+}
+
+.distant-card .photo-frame {
+    width: 160px;
+}
+
+.distant-card .photo-frame img {
+    width: 100%;
+}
+
 .single-media {
     max-width: 400px;
     margin: 0 auto;
@@ -445,6 +486,10 @@ nav a:hover .nav-arrow {
     .comparison {
         grid-template-columns: 1fr;
         gap: 2.5rem;
+    }
+
+    .hybrid-pair {
+        flex-direction: column;
     }
 
     .plate-row {
