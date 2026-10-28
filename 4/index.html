@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project 4 — CS180 Portfolio</title>
+    <link rel="stylesheet" href="../style.css?v=4">
+    <style>
+        pre.code-block.matrix-block {
+            white-space: pre;
+            overflow-x: auto;
+            font-size: 0.62rem;
+            line-height: 1.45;
+        }
+    </style>
+</head>
+<body>
+    <main class="project-page">
+        <a class="back-link" href="../index.html">← Back to portfolio</a>
+
+        <header class="project-header">
+            <h1>Project 4</h1>
+            <p class="subtitle">Image Warping and Mosaicing · Part A</p>
+        </header>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part A.1</span>
+                <h2>Shoot the Pictures</h2>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Set 1 · living room</h3>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3324.jpg" alt="Living room from the table toward the television"></div>
+                        <p class="photo-caption">IMG_3324</p>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3325.jpg" alt="Living room with the television and the window"></div>
+                        <p class="photo-caption">IMG_3325</p>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3326.jpg" alt="Living room centered on the window"></div>
+                        <p class="photo-caption">IMG_3326</p>
+                    </div>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3327.jpg" alt="Living room toward the couch and neon sign"></div>
+                        <p class="photo-caption">IMG_3327</p>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3328.jpg" alt="Living room with the neon sign and the couch"></div>
+                        <p class="photo-caption">IMG_3328</p>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3329.jpg" alt="Living room ending at the posters on the right wall"></div>
+                        <p class="photo-caption">IMG_3329</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Set 2 · posters and door</h3>
+                </div>
+                <div class="plate-row four">
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3330.jpg" alt="Small posters and the curtain"></div>
+                        <p class="photo-caption">IMG_3330</p>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3331.jpg" alt="Curtain and the large landscape print"></div>
+                        <p class="photo-caption">IMG_3331</p>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3332.jpg" alt="Prints continuing toward the door"></div>
+                        <p class="photo-caption">IMG_3332</p>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3333.jpg" alt="Prints and the wooden door"></div>
+                        <p class="photo-caption">IMG_3333</p>
+                    </div>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3334.jpg" alt="Door, wardrobe, and the cat"></div>
+                        <p class="photo-caption">IMG_3334</p>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3335.jpg" alt="Wardrobe and the table"></div>
+                        <p class="photo-caption">IMG_3335</p>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3336.jpg" alt="Table and the pink wall"></div>
+                        <p class="photo-caption">IMG_3336</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part A.2</span>
+                <h2>Recover Homographies</h2>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>computeH</h3>
+                </div>
+<pre class="code-block matrix-block"><code>def build_system(im1_pts, im2_pts):
+    im1_pts = np.asarray(im1_pts, dtype=np.float64)
+    im2_pts = np.asarray(im2_pts, dtype=np.float64)
+    num_points = im1_pts.shape[0]
+    system = np.zeros((2 * num_points, 8))
+    targets = np.zeros(2 * num_points)
+    for i in range(num_points):
+        x, y = im1_pts[i]
+        x_prime, y_prime = im2_pts[i]
+        system[2 * i] = [x, y, 1, 0, 0, 0, -x * x_prime, -y * x_prime]
+        system[2 * i + 1] = [0, 0, 0, x, y, 1, -x * y_prime, -y * y_prime]
+        targets[2 * i] = x_prime
+        targets[2 * i + 1] = y_prime
+    return system, targets
+
+def computeH(im1_pts, im2_pts):
+    system, targets = build_system(im1_pts, im2_pts)
+    solution, _, _, _ = np.linalg.lstsq(system, targets, rcond=None)
+    homography = np.array([
+        [solution[0], solution[1], solution[2]],
+        [solution[3], solution[4], solution[5]],
+        [solution[6], solution[7], 1.0],
+    ])
+    return homography</code></pre>
+            </div>
+
+            <div class="part-explanation">
+                <p>The long side of the photos is 1600 pixels as the coordinates are present on scaled copies of the photos. H maps the left image onto the right image. Within the second photo, point I is marked by a cyan circle and the location of the matching point sent by H is marked by a yellow cross.</p>
+            </div>
+
+            <div class="pyramid-example" style="margin-top: 2.5rem;">
+                <div class="example-heading">
+                    <h3>Living room · IMG_3326 to IMG_3327</h3>
+                </div>
+                <div class="photo-frame"><img src="./a2/living_room_corr.jpg" alt="Twelve numbered correspondences between two living-room photos"></div>
+<pre class="code-block matrix-block" style="margin-top: 1.25rem;"><code>           h11            h12            h13            h21            h22            h23            h31            h32             b
+      530.2000       514.5000         1.0000         0.0000         0.0000         0.0000    -89275.0760    -86631.5100      168.3800
+        0.0000         0.0000         0.0000       530.2000       514.5000         1.0000   -272050.9220   -263995.0950      513.1100
+     1289.0800       558.4000         1.0000         0.0000         0.0000         0.0000  -1248190.3824   -540687.5520      968.2800
+        0.0000         0.0000         0.0000      1289.0800       558.4000         1.0000   -754588.7596   -326870.6080      585.3700
+      615.2900       932.6700         1.0000         0.0000         0.0000         0.0000   -169487.7834   -256913.2782      275.4600
+        0.0000         0.0000         0.0000       615.2900       932.6700         1.0000   -620716.8578   -940896.1494     1008.8200
+     1460.0700       997.6700         1.0000         0.0000         0.0000         0.0000  -1595841.9093  -1090443.3333     1092.9900
+        0.0000         0.0000         0.0000      1460.0700       997.6700         1.0000  -1395140.6871   -953303.6151      955.5300
+     1038.9300       891.1300         1.0000         0.0000         0.0000         0.0000   -785046.6759   -673364.5619      755.6300
+        0.0000         0.0000         0.0000      1038.9300       891.1300         1.0000   -939213.4986   -805599.3426      904.0200
+      812.5100       621.4700         1.0000         0.0000         0.0000         0.0000   -429484.6609   -328502.8273      528.5900
+        0.0000         0.0000         0.0000       812.5100       621.4700         1.0000   -521135.7889   -398604.6433      641.3900
+     1241.6800       984.7700         1.0000         0.0000         0.0000         0.0000  -1155507.4080   -916426.9620      930.6000
+        0.0000         0.0000         0.0000      1241.6800       984.7700         1.0000  -1205447.7776   -956034.4114      970.8200
+      526.8800       759.4200         1.0000         0.0000         0.0000         0.0000    -81339.7344   -117239.2596      154.3800
+        0.0000         0.0000         0.0000       526.8800       759.4200         1.0000   -427721.1840   -616497.1560      811.8000
+     1110.9900       484.1000         1.0000         0.0000         0.0000         0.0000   -914966.9244   -398685.3960      823.5600
+        0.0000         0.0000         0.0000      1110.9900       484.1000         1.0000   -570415.5957   -248551.4630      513.4300
+     1127.2500       721.1900         1.0000         0.0000         0.0000         0.0000   -942031.5525   -602691.2711      835.6900
+        0.0000         0.0000         0.0000      1127.2500       721.1900         1.0000   -828021.4875   -529750.1145      734.5500
+      957.8800       617.2900         1.0000         0.0000         0.0000         0.0000   -652335.4376   -420386.8358      681.0200
+        0.0000         0.0000         0.0000       957.8800       617.2900         1.0000   -611414.8040   -394016.2070      638.3000
+      865.6300       752.6700         1.0000         0.0000         0.0000         0.0000   -504367.9758   -438550.7022      582.6600
+        0.0000         0.0000         0.0000       865.6300       752.6700         1.0000   -673754.4542   -585833.1678      778.3400</code></pre>
+<pre class="code-block"><code>H = [[  2.038707,  -0.059103,  -826.904988],
+     [  0.425732,   1.560788,  -350.445091],
+     [  0.000666,  -0.000060,     1.000000]]</code></pre>
+                <div class="photo-frame" style="margin-top: 1.25rem;"><img src="./a2/living_room_reproj.jpg" alt="Measured points and homography-mapped points on the second living-room photo"></div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Posters · IMG_3331 to IMG_3332</h3>
+                </div>
+                <div class="photo-frame"><img src="./a2/posters_corr.jpg" alt="Twelve numbered correspondences between two poster-wall photos"></div>
+<pre class="code-block matrix-block" style="margin-top: 1.25rem;"><code>           h11            h12            h13            h21            h22            h23            h31            h32             b
+      668.8400       259.5700         1.0000         0.0000         0.0000         0.0000    -39334.4804    -15265.3117       58.8100
+        0.0000         0.0000         0.0000       668.8400       259.5700         1.0000   -170888.6200    -66320.1350      255.5000
+     1573.5000       301.5600         1.0000         0.0000         0.0000         0.0000  -1510890.4350   -289560.9276      960.2100
+        0.0000         0.0000         0.0000      1573.5000       301.5600         1.0000   -584445.1050   -112008.4308      371.4300
+      744.5800       713.7500         1.0000         0.0000         0.0000         0.0000   -122922.7122   -117832.9875      165.0900
+        0.0000         0.0000         0.0000       744.5800       713.7500         1.0000   -584011.3230   -559829.8125      784.3500
+     1529.8000      1146.5800         1.0000         0.0000         0.0000         0.0000  -1468072.5700  -1100315.4970      959.6500
+        0.0000         0.0000         0.0000      1529.8000      1146.5800         1.0000  -1699164.1580  -1273517.8718     1110.7100
+     1196.5700       589.5700         1.0000         0.0000         0.0000         0.0000   -792655.8308   -390554.7508      662.4400
+        0.0000         0.0000         0.0000      1196.5700       589.5700         1.0000   -747377.6220   -368245.4220      624.6000
+     1052.3600       254.2700         1.0000         0.0000         0.0000         0.0000   -538482.0884   -130107.4163      511.6900
+        0.0000         0.0000         0.0000      1052.3600       254.2700         1.0000   -306689.2748    -74101.9061      291.4300
+     1205.1900      1016.4700         1.0000         0.0000         0.0000         0.0000   -822096.2547   -693364.6811      682.1300
+        0.0000         0.0000         0.0000      1205.1900      1016.4700         1.0000  -1257543.4536  -1060625.4568     1043.4400
+      868.9800       456.0100         1.0000         0.0000         0.0000         0.0000   -275327.6232   -144482.2084      316.8400
+        0.0000         0.0000         0.0000       868.9800       456.0100         1.0000   -424731.3546   -222884.0077      488.7700
+     1488.6100       536.2300         1.0000         0.0000         0.0000         0.0000  -1346343.5423   -484982.4989      904.4300
+        0.0000         0.0000         0.0000      1488.6100       536.2300         1.0000   -851991.0474   -306905.8782      572.3400
+     1286.7400       379.3100         1.0000         0.0000         0.0000         0.0000   -948739.1368   -279672.8492      737.3200
+        0.0000         0.0000         0.0000      1286.7400       379.3100         1.0000   -549553.7866   -161999.5079      427.0900
+      635.4200       484.9500         1.0000         0.0000         0.0000         0.0000     -7053.1620     -5382.9450       11.1000
+        0.0000         0.0000         0.0000       635.4200       484.9500         1.0000   -329541.5204   -251504.7690      518.6200
+      998.2600       634.4400         1.0000         0.0000         0.0000         0.0000   -466307.2112   -296359.6128      467.1200
+        0.0000         0.0000         0.0000       998.2600       634.4400         1.0000   -676590.6802   -430004.3988      677.7700</code></pre>
+<pre class="code-block"><code>H = [[  1.932059,   0.006378,  -1213.707111],
+     [  0.322289,   1.573253,   -272.707579],
+     [  0.000587,  -0.000065,      1.000000]]</code></pre>
+                <div class="photo-frame" style="margin-top: 1.25rem;"><img src="./a2/posters_reproj.jpg" alt="Measured points and homography-mapped points on the second poster photo"></div>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part A.3</span>
+                <h2>Warp the Images</h2>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Inverse warp</h3>
+                </div>
+<pre class="code-block matrix-block"><code>def warp_image(image, homography, sample):
+    minimum, maximum = warp_bounds(image, homography)
+    source_x, source_y = inverse_coordinates(minimum, maximum, homography)
+    colors, alpha = sample(image, source_x, source_y)
+    warped = np.dstack([colors, alpha])
+    return warped, minimum
+
+def sample_nearest(image, source_x, source_y):
+    height, width = image.shape[:2]
+    nearest_x = np.floor(source_x + 0.5).astype(np.int32)
+    nearest_y = np.floor(source_y + 0.5).astype(np.int32)
+    valid = (nearest_x >= 0) & (nearest_y >= 0) & (nearest_x < width) & (nearest_y < height)
+    colors = np.zeros(source_x.shape + (image.shape[2],), dtype=np.uint8)
+    colors[valid] = image[nearest_y[valid], nearest_x[valid]]
+    alpha = np.zeros(source_x.shape, dtype=np.uint8)
+    alpha[valid] = 255
+    return colors, alpha
+
+def sample_bilinear(image, source_x, source_y):
+    height, width = image.shape[:2]
+    x0 = np.floor(source_x).astype(np.int32)
+    y0 = np.floor(source_y).astype(np.int32)
+    x1 = x0 + 1
+    y1 = y0 + 1
+    valid = (x0 >= 0) & (y0 >= 0) & (x1 < width) & (y1 < height)
+    dx = (source_x - x0).astype(np.float32)
+    dy = (source_y - y0).astype(np.float32)
+    weight_00 = (1 - dx) * (1 - dy)
+    weight_10 = dx * (1 - dy)
+    weight_01 = (1 - dx) * dy
+    weight_11 = dx * dy
+    image_f = image.astype(np.float32)
+    colors = np.zeros(source_x.shape + (image.shape[2],), dtype=np.float32)
+    colors[valid] = (
+        image_f[y0[valid], x0[valid]] * weight_00[valid, None]
+        + image_f[y0[valid], x1[valid]] * weight_10[valid, None]
+        + image_f[y1[valid], x0[valid]] * weight_01[valid, None]
+        + image_f[y1[valid], x1[valid]] * weight_11[valid, None]
+    )
+    alpha = np.zeros(source_x.shape, dtype=np.uint8)
+    alpha[valid] = 255
+    return np.clip(np.round(colors), 0, 255).astype(np.uint8), alpha</code></pre>
+            </div>
+
+            <div class="pyramid-example" style="margin-top: 2.5rem;">
+                <div class="example-heading">
+                    <h3>Print · IMG_3331</h3>
+                </div>
+                <div class="photo-frame"><img src="./a3/print_corners.jpg" alt="Landscape print with its four corners marked"></div>
+                <div class="plate-row two" style="margin-top: 1.25rem;">
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./a3/print_nearest.jpg" alt="Rectified print using nearest neighbor"></div>
+                        <p class="photo-caption caption-before">Nearest neighbor</p>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./a3/print_bilinear.jpg" alt="Rectified print using bilinear interpolation"></div>
+                        <p class="photo-caption caption-after">Bilinear</p>
+                    </div>
+                </div>
+                <div class="photo-frame" style="margin-top: 1.25rem;"><img src="./a3/print_zoom.jpg" alt="Zoomed corner of the print, nearest neighbor on the left and bilinear on the right"></div>
+                <div class="photo-frame" style="margin-top: 1.25rem;"><img src="./a3/print_full_nearest.jpg" alt="Whole photo warped so the print is rectangular"></div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Window · IMG_3326</h3>
+                </div>
+                <div class="photo-frame"><img src="./a3/window_corners.jpg" alt="Window opening with its four corners marked"></div>
+                <div class="photo-frame" style="margin-top: 1.25rem;"><img src="./a3/window_nearest.jpg" alt="Rectified window using nearest neighbor"></div>
+                <div class="photo-frame" style="margin-top: 1.25rem;"><img src="./a3/window_bilinear.jpg" alt="Rectified window using bilinear interpolation"></div>
+                <div class="photo-frame" style="margin-top: 1.25rem;"><img src="./a3/window_zoom.jpg" alt="Zoomed blind edge, nearest neighbor on the left and bilinear on the right"></div>
+                <div class="photo-frame" style="margin-top: 1.25rem;"><img src="./a3/window_full_nearest.jpg" alt="Whole living room warped so the window is rectangular"></div>
+                <div class="part-explanation">
+                    <p>The blind slats, print border and moon break into steps in the nearest neighbor approach as it rounds each source coordinate to one pixel. The approach itself takes 0.62 seconds to run on the print and 0.16 seconds to run on the window. The aforementioned edges stay continuous and softer in the bilinear approach as it blends four surrounding pixels. This approach takes 1.27 seconds to run on the print and 0.43 seconds to run on the window. I chose bilinear interpolation as my selected interpolation for mosaic creation given its better smoothing.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part A.4</span>
+                <h2>Blend the Images into a Mosaic</h2>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Feathered average</h3>
+                </div>
+<pre class="code-block matrix-block"><code>def feather_weights(height, width):
+    y = np.arange(height)
+    x = np.arange(width)
+    y_distance = np.minimum(y, height - 1 - y)
+    x_distance = np.minimum(x, width - 1 - x)
+    weights = np.minimum(y_distance[:, None], x_distance[None, :]).astype(np.float32)
+    return weights / np.max(weights)
+
+def blend_feather(layers):
+    total_color = np.zeros_like(layers[0][0])
+    total_weight = np.zeros(layers[0][0].shape[:2], dtype=np.float32)
+    for colors, weights in layers:
+        total_color += colors * weights[:, :, None]
+        total_weight += weights
+    covered = total_weight > 0
+    mosaic = np.full_like(total_color, 244)
+    mosaic[covered] = total_color[covered] / total_weight[covered, None]
+    return np.clip(np.round(mosaic), 0, 255).astype(np.uint8), covered</code></pre>
+            </div>
+
+            <div class="part-explanation">
+                <p>Each mosaic uses three photos with the middle photo being used as the reference. The left and right photos are aligned to the latter using homographies obtained from the computeH function. All three photos are then inverse-warped into one canvas with bilinear sampling. Pixels that miss the source may stay empty, with the canvas being the bounding box of each image post the aforementioned mapping.</p>
+                <p>Since a plain paste leaves hard edges at the end of a photo, I assign each source pixel a weight equal to its distance to the nearest edge of its own photo. This weight is normalized such that the center is 1 and the border is 0, and is warped along with the color. Subsequently, the color at every output pixel is the weighted average of the photos covering it. Thus, the photo seams disappear as the center of each photo dominates the overlap pixel value and this contribution falls off before the edge.</p>
+                <p>White wedges are outside every warped photo, and a wide rotation does not fill a rectangle once projected onto the middle photo's plane. Outer edges tilt away from this plane.</p>
+            </div>
+
+            <div class="pyramid-example" style="margin-top: 2.5rem;">
+                <div class="example-heading">
+                    <h3>Living room · IMG_3325, IMG_3326, IMG_3327</h3>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3325.jpg" alt="Living room photo looking toward the television"></div>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3326.jpg" alt="Living room photo centered on the window"></div>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3327.jpg" alt="Living room photo looking toward the couch and neon sign"></div>
+                    </div>
+                </div>
+                <div class="photo-frame" style="margin-top: 1.25rem;"><img src="./a4/living_overwrite.jpg" alt="Living room mosaic with later photos pasted over earlier ones"></div>
+                <div class="photo-frame" style="margin-top: 1.25rem;"><img src="./a4/living_feather.jpg" alt="Living room mosaic blended with feather weights"></div>
+                <div class="part-explanation">
+                    <p>The overwrite paste leaves a hard edge through the wall and the floor. The feathered average removes it.</p>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Posters · IMG_3330, IMG_3331, IMG_3332</h3>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3330.jpg" alt="Wall of small posters and the curtain"></div>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3331.jpg" alt="Curtain and the large landscape print"></div>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3332.jpg" alt="Prints continuing toward the door"></div>
+                    </div>
+                </div>
+                <div class="photo-frame" style="margin-top: 1.25rem;"><img src="./a4/posters_feather.jpg" alt="Feathered mosaic of the poster wall"></div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Door · IMG_3332, IMG_3333, IMG_3334</h3>
+                </div>
+                <div class="plate-row">
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3332.jpg" alt="Prints on the wall beside the curtain"></div>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3333.jpg" alt="Prints and the wooden door"></div>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./previews/IMG_3334.jpg" alt="Door, wardrobe, and the cat"></div>
+                    </div>
+                </div>
+                <div class="photo-frame" style="margin-top: 1.25rem;"><img src="./a4/door_feather.jpg" alt="Feathered mosaic from the prints through the door to the wardrobe"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Divit Chopra · UC Berkeley</p>
+    </footer>
+</body>
+</html>
