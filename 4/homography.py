@@ -500,8 +500,306 @@ def part_a_4():
     save_mosaic("posters", posters, posters_homographies, output_dir)
     save_mosaic("door", door, door_homographies, output_dir)
 
+def harris_response(gray):
+    gray = gray.astype(np.float64)
+    derivative_x = cv2.GaussianBlur(cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3), (0, 0), 1.0)
+    derivative_y = cv2.GaussianBlur(cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3), (0, 0), 1.0)
+    moment_xx = cv2.GaussianBlur(derivative_x * derivative_x, (0, 0), 1.5)
+    moment_yy = cv2.GaussianBlur(derivative_y * derivative_y, (0, 0), 1.5)
+    moment_xy = cv2.GaussianBlur(derivative_x * derivative_y, (0, 0), 1.5)
+    determinant = moment_xx * moment_yy - moment_xy * moment_xy
+    trace = moment_xx + moment_yy
+    response = np.zeros_like(determinant)
+    usable = trace > 1e-8
+    response[usable] = determinant[usable] / trace[usable]
+    return response
+
+def harris_corners(gray, threshold, margin):
+    response = harris_response(gray)
+    local_maximum = cv2.dilate(response, np.ones((3, 3)))
+    rows, columns = np.where((response == local_maximum) & (response > threshold))
+    height, width = gray.shape
+    inside = (columns >= margin) & (rows >= margin) & (columns < width - margin) & (rows < height - margin)
+    points = np.stack([columns[inside], rows[inside]], axis=1).astype(np.float64)
+    strengths = response[rows[inside], columns[inside]]
+    return points, strengths
+
+def adaptive_non_maximal_suppression(points, strengths, count, robust):
+    order = np.argsort(strengths)[::-1]
+    points = points[order]
+    strengths = strengths[order]
+    radii = np.full(len(points), np.inf)
+    negated = -strengths
+    for index in range(1, len(points)):
+        limit = np.searchsorted(negated, -(strengths[index] / robust), side="left")
+        if limit == 0:
+            continue
+        deltas = points[:limit] - points[index]
+        radii[index] = np.min(np.sum(deltas * deltas, axis=1))
+    selected = np.argsort(radii)[::-1][:count]
+    return points[selected], strengths[selected]
+
+def draw_corners(image, points, output_path):
+    marked = image.copy()
+    for x, y in np.round(points).astype(int):
+        cv2.circle(marked, (int(x), int(y)), 2, (40, 70, 220), -1, cv2.LINE_AA)
+    cv2.imwrite(str(output_path), marked, [cv2.IMWRITE_JPEG_QUALITY, 85])
+
+def extract_descriptors(gray, points):
+    gray = gray.astype(np.float64)
+    height, width = gray.shape
+    kept_points = []
+    descriptors = []
+    for x, y in points:
+        column = int(round(x))
+        row = int(round(y))
+        if row < 20 or column < 20 or row + 20 > height or column + 20 > width:
+            continue
+        window = gray[row - 20:row + 20, column - 20:column + 20]
+        patch = window.reshape(8, 5, 8, 5).mean(axis=(1, 3))
+        deviation = float(patch.std())
+        if deviation < 1e-6:
+            continue
+        descriptors.append(((patch - patch.mean()) / deviation).ravel())
+        kept_points.append([column, row])
+    if not descriptors:
+        return np.zeros((0, 2)), np.zeros((0, 64))
+    return np.asarray(kept_points, dtype=np.float64), np.vstack(descriptors)
+
+def match_descriptors(descriptors_1, descriptors_2, squared_ratio):
+    if len(descriptors_1) == 0 or len(descriptors_2) < 2:
+        return np.zeros(0, dtype=int), np.zeros(0, dtype=int)
+    distances = np.sum((descriptors_1[:, None, :] - descriptors_2[None, :, :]) ** 2, axis=2)
+    pair = np.argpartition(distances, 1, axis=1)[:, :2]
+    pair_distances = np.take_along_axis(distances, pair, axis=1)
+    order = np.argsort(pair_distances, axis=1)
+    first = np.take_along_axis(pair, order[:, :1], axis=1)[:, 0]
+    second = np.take_along_axis(pair, order[:, 1:], axis=1)[:, 0]
+    rows = np.arange(len(descriptors_1))
+    first_distance = distances[rows, first]
+    second_distance = distances[rows, second]
+    keep = (second_distance > 0) & (first_distance < squared_ratio * second_distance)
+    return np.where(keep)[0], first[keep]
+
+def ransac_homography(source_points, destination_points, iterations, inlier_distance):
+    source_points = np.asarray(source_points, dtype=np.float64)
+    destination_points = np.asarray(destination_points, dtype=np.float64)
+    point_count = len(source_points)
+    if point_count < 4:
+        return None, np.zeros(point_count, dtype=bool)
+    generator = np.random.default_rng(0)
+    best_inliers = np.zeros(point_count, dtype=bool)
+    for _ in range(iterations):
+        sample = generator.choice(point_count, 4, replace=False)
+        homography = computeH(source_points[sample], destination_points[sample])
+        if not np.isfinite(homography).all():
+            continue
+        projected = apply_homography(homography, source_points)
+        if not np.isfinite(projected).all():
+            continue
+        errors = np.linalg.norm(projected - destination_points, axis=1)
+        inliers = errors < inlier_distance
+        if inliers.sum() > best_inliers.sum():
+            best_inliers = inliers
+    if best_inliers.sum() < 4:
+        return None, best_inliers
+    homography = computeH(source_points[best_inliers], destination_points[best_inliers])
+    projected = apply_homography(homography, source_points)
+    errors = np.linalg.norm(projected - destination_points, axis=1)
+    inliers = np.isfinite(errors) & (errors < inlier_distance)
+    return homography, inliers
+
+def load_preview(name):
+    path = Path(__file__).resolve().parent / "previews" / name
+    image = cv2.imread(str(path))
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    return image, gray
+
+def corner_sets(gray, threshold, margin, count, robust):
+    points, strengths = harris_corners(gray, threshold, margin)
+    selected, _ = adaptive_non_maximal_suppression(points, strengths, count, robust)
+    return points, selected
+
+def spread_indices(points, count):
+    remaining = np.ones(len(points), dtype=bool)
+    first = int(np.argmax(points[:, 0] + points[:, 1]))
+    chosen = [first]
+    remaining[first] = False
+    while len(chosen) < count and np.any(remaining):
+        distances = np.linalg.norm(points[:, None, :] - points[chosen][None, :, :], axis=2)
+        nearest = np.min(distances, axis=1)
+        nearest[~remaining] = -1
+        nxt = int(np.argmax(nearest))
+        chosen.append(nxt)
+        remaining[nxt] = False
+    return np.array(chosen)
+
+def save_feature_sheet(image, points, descriptors, output_path):
+    chosen = spread_indices(points, min(8, len(points)))
+    rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    figure = plt.figure(figsize=(12.4, 7.2))
+    photo = figure.add_axes([0.02, 0.28, 0.96, 0.70])
+    photo.imshow(rgb)
+    stroke = [pe.withStroke(linewidth=2.6, foreground="black")]
+    for number, index in enumerate(chosen, start=1):
+        x, y = points[index]
+        photo.scatter([x], [y], s=40, facecolors="none", edgecolors="#5ee0ff", linewidths=1.4, zorder=3)
+        photo.text(x + 8, y - 8, str(number), color="white", fontsize=8, fontweight="bold", path_effects=stroke, zorder=4)
+    photo.set_axis_off()
+    for number, index in enumerate(chosen):
+        patch = descriptors[index].reshape(8, 8)
+        shown = patch - patch.min()
+        scale = shown.max()
+        if scale > 0:
+            shown = shown / scale
+        axis = figure.add_axes([0.04 + number * 0.12, 0.04, 0.09, 0.16])
+        axis.imshow(shown, cmap="gray", interpolation="nearest")
+        axis.set_title(str(number + 1), fontsize=8, color="#1c1915", pad=2)
+        axis.set_axis_off()
+    figure.savefig(output_path, dpi=140, bbox_inches="tight", facecolor="white")
+    plt.close(figure)
+
+def draw_feature_matches(image_1, image_2, points_1, points_2, output_path):
+    height = max(image_1.shape[0], image_2.shape[0])
+    gap = 28
+    offset = image_1.shape[1] + gap
+    canvas = np.full((height, offset + image_2.shape[1], 3), 244, np.uint8)
+    canvas[:image_1.shape[0], :image_1.shape[1]] = image_1
+    canvas[:image_2.shape[0], offset:offset + image_2.shape[1]] = image_2
+    generator = np.random.default_rng(1)
+    for point_1, point_2 in zip(points_1, points_2):
+        color = tuple(int(channel) for channel in generator.integers(30, 230, size=3))
+        start = (int(round(point_1[0])), int(round(point_1[1])))
+        end = (int(round(point_2[0])) + offset, int(round(point_2[1])))
+        cv2.line(canvas, start, end, color, 1, cv2.LINE_AA)
+        cv2.circle(canvas, start, 3, color, -1, cv2.LINE_AA)
+        cv2.circle(canvas, end, 3, color, -1, cv2.LINE_AA)
+    cv2.imwrite(str(output_path), canvas, [cv2.IMWRITE_JPEG_QUALITY, 85])
+
+def features_for(name, threshold, margin, count, robust):
+    _, gray = load_preview(name)
+    _, selected = corner_sets(gray, threshold, margin, count, robust)
+    return extract_descriptors(gray, selected)
+
+def aligned_homography(source_points, source_descriptors, destination_points, destination_descriptors, squared_ratio, iterations, inlier_distance):
+    source_index, destination_index = match_descriptors(source_descriptors, destination_descriptors, squared_ratio)
+    matched_source = source_points[source_index]
+    matched_destination = destination_points[destination_index]
+    homography, inliers = ransac_homography(matched_source, matched_destination, iterations, inlier_distance)
+    return homography, matched_source, matched_destination, inliers
+
+def part_b_1():
+    root = Path(__file__).resolve().parent
+    output_dir = root / "b1"
+    output_dir.mkdir(exist_ok=True)
+    threshold = 80.0
+    margin = 20
+    count = 500
+    robust = 0.9
+    names = [
+        ("living", "IMG_3326.jpg"),
+        ("posters", "IMG_3331.jpg"),
+        ("door", "IMG_3333.jpg"),
+    ]
+    for name, filename in names:
+        image, gray = load_preview(filename)
+        points, selected = corner_sets(gray, threshold, margin, count, robust)
+        draw_corners(image, points, output_dir / f"{name}_harris.jpg")
+        draw_corners(image, selected, output_dir / f"{name}_anms.jpg")
+        print(name, "harris", len(points), "anms", len(selected))
+
+def part_b_2():
+    root = Path(__file__).resolve().parent
+    output_dir = root / "b2"
+    output_dir.mkdir(exist_ok=True)
+    image, _ = load_preview("IMG_3326.jpg")
+    points, descriptors = features_for("IMG_3326.jpg", 80.0, 20, 500, 0.9)
+    save_feature_sheet(image, points, descriptors, output_dir / "living_features.jpg")
+    print("features", len(points), descriptors.shape[1])
+
+def part_b_3():
+    root = Path(__file__).resolve().parent
+    output_dir = root / "b3"
+    output_dir.mkdir(exist_ok=True)
+    threshold = 80.0
+    margin = 20
+    count = 500
+    robust = 0.9
+    squared_ratio = 0.5
+    pairs = [
+        ("living_left", "IMG_3325.jpg", "IMG_3326.jpg"),
+        ("living_right", "IMG_3327.jpg", "IMG_3326.jpg"),
+        ("posters_left", "IMG_3330.jpg", "IMG_3331.jpg"),
+        ("posters_right", "IMG_3332.jpg", "IMG_3331.jpg"),
+        ("door_left", "IMG_3332.jpg", "IMG_3333.jpg"),
+        ("door_right", "IMG_3334.jpg", "IMG_3333.jpg"),
+    ]
+    for name, source_name, destination_name in pairs:
+        source_image, _ = load_preview(source_name)
+        destination_image, _ = load_preview(destination_name)
+        source_points, source_descriptors = features_for(source_name, threshold, margin, count, robust)
+        destination_points, destination_descriptors = features_for(destination_name, threshold, margin, count, robust)
+        source_index, destination_index = match_descriptors(source_descriptors, destination_descriptors, squared_ratio)
+        draw_feature_matches(
+            source_image,
+            destination_image,
+            source_points[source_index],
+            destination_points[destination_index],
+            output_dir / f"{name}.jpg",
+        )
+        print(name, "matches", len(source_index))
+
+def part_b_4():
+    part_b_1()
+    part_b_2()
+    part_b_3()
+    root = Path(__file__).resolve().parent
+    output_dir = root / "b4"
+    output_dir.mkdir(exist_ok=True)
+    previews = root / "previews"
+    threshold = 80.0
+    margin = 20
+    count = 500
+    robust = 0.9
+    squared_ratio = 0.5
+    iterations = 4000
+    inlier_distance = 3.0
+    mosaics = [
+        ("living", ["IMG_3325.jpg", "IMG_3326.jpg", "IMG_3327.jpg"]),
+        ("posters", ["IMG_3330.jpg", "IMG_3331.jpg", "IMG_3332.jpg"]),
+        ("door", ["IMG_3332.jpg", "IMG_3333.jpg", "IMG_3334.jpg"]),
+    ]
+    cache = {}
+    for _, filenames in mosaics:
+        for filename in filenames:
+            if filename not in cache:
+                cache[filename] = features_for(filename, threshold, margin, count, robust)
+    for name, filenames in mosaics:
+        homographies = [np.eye(3)]
+        reference_points, reference_descriptors = cache[filenames[1]]
+        for filename in (filenames[0], filenames[2]):
+            source_points, source_descriptors = cache[filename]
+            homography, matched_source, matched_destination, inliers = aligned_homography(
+                source_points,
+                source_descriptors,
+                reference_points,
+                reference_descriptors,
+                squared_ratio,
+                iterations,
+                inlier_distance,
+            )
+            if homography is None:
+                raise RuntimeError(f"{name} {filename} had too few correspondences")
+            inlier_source = matched_source[inliers]
+            inlier_destination = matched_destination[inliers]
+            error = np.linalg.norm(apply_homography(homography, inlier_source) - inlier_destination, axis=1)
+            print(name, filename, "matches", len(matched_source), "inliers", int(inliers.sum()), f"mean {error.mean():.3f}px")
+            homographies.append(homography)
+        ordered = [homographies[1], homographies[0], homographies[2]]
+        save_mosaic(name, [previews / filename for filename in filenames], ordered, output_dir)
+
 def main():
-    part_a_4()
+    part_b_4()
 
 if __name__ == "__main__":
     main()

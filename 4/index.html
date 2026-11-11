@@ -20,7 +20,7 @@
 
         <header class="project-header">
             <h1>Project 4</h1>
-            <p class="subtitle">Image Warping and Mosaicing · Part A</p>
+            <p class="subtitle">Image Warping and Mosaicing</p>
         </header>
 
         <section class="part">
@@ -395,6 +395,212 @@ def blend_feather(layers):
                     </div>
                 </div>
                 <div class="photo-frame" style="margin-top: 1.25rem;"><img src="./a4/door_feather.jpg" alt="Feathered mosaic from the prints through the door to the wardrobe"></div>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part B.1</span>
+                <h2>Harris Corner Detection</h2>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Living room · IMG_3326</h3>
+                </div>
+                <div class="plate-row two">
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./b1/living_harris.jpg" alt="Harris corners overlaid on the living room"></div>
+                        <p class="photo-caption">Harris corners</p>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./b1/living_anms.jpg" alt="ANMS corners overlaid on the living room"></div>
+                        <p class="photo-caption">Adaptive non-maximal suppression</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Posters · IMG_3331</h3>
+                </div>
+                <div class="plate-row two">
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./b1/posters_harris.jpg" alt="Harris corners overlaid on the poster wall"></div>
+                        <p class="photo-caption">Harris corners</p>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./b1/posters_anms.jpg" alt="ANMS corners overlaid on the poster wall"></div>
+                        <p class="photo-caption">Adaptive non-maximal suppression</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Door · IMG_3333</h3>
+                </div>
+                <div class="plate-row two">
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./b1/door_harris.jpg" alt="Harris corners overlaid on the door"></div>
+                        <p class="photo-caption">Harris corners</p>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./b1/door_anms.jpg" alt="ANMS corners overlaid on the door"></div>
+                        <p class="photo-caption">Adaptive non-maximal suppression</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part B.2</span>
+                <h2>Feature Descriptor Extraction</h2>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Living room · IMG_3326</h3>
+                </div>
+                <div class="photo-frame"><img src="./b2/living_features.jpg" alt="Eight normalized 8 by 8 descriptors and the corners they were sampled from"></div>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part B.3</span>
+                <h2>Feature Matching</h2>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Living room · IMG_3325 to IMG_3326</h3>
+                </div>
+                <div class="photo-frame"><img src="./b3/living_left.jpg" alt="Matched features between IMG_3325 and IMG_3326"></div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Living room · IMG_3327 to IMG_3326</h3>
+                </div>
+                <div class="photo-frame"><img src="./b3/living_right.jpg" alt="Matched features between IMG_3327 and IMG_3326"></div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Posters · IMG_3330 to IMG_3331</h3>
+                </div>
+                <div class="photo-frame"><img src="./b3/posters_left.jpg" alt="Matched features between IMG_3330 and IMG_3331"></div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Posters · IMG_3332 to IMG_3331</h3>
+                </div>
+                <div class="photo-frame"><img src="./b3/posters_right.jpg" alt="Matched features between IMG_3332 and IMG_3331"></div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Door · IMG_3332 to IMG_3333</h3>
+                </div>
+                <div class="photo-frame"><img src="./b3/door_left.jpg" alt="Matched features between IMG_3332 and IMG_3333"></div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Door · IMG_3334 to IMG_3333</h3>
+                </div>
+                <div class="photo-frame"><img src="./b3/door_right.jpg" alt="Matched features between IMG_3334 and IMG_3333"></div>
+            </div>
+        </section>
+
+        <section class="part">
+            <div class="part-heading">
+                <span class="part-meta">Part B.4</span>
+                <h2>RANSAC for Robust Homography</h2>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>ransac_homography</h3>
+                </div>
+<pre class="code-block matrix-block"><code>def ransac_homography(source_points, destination_points, iterations, inlier_distance):
+    source_points = np.asarray(source_points, dtype=np.float64)
+    destination_points = np.asarray(destination_points, dtype=np.float64)
+    point_count = len(source_points)
+    if point_count &lt; 4:
+        return None, np.zeros(point_count, dtype=bool)
+    generator = np.random.default_rng(0)
+    best_inliers = np.zeros(point_count, dtype=bool)
+    for _ in range(iterations):
+        sample = generator.choice(point_count, 4, replace=False)
+        homography = computeH(source_points[sample], destination_points[sample])
+        if not np.isfinite(homography).all():
+            continue
+        projected = apply_homography(homography, source_points)
+        if not np.isfinite(projected).all():
+            continue
+        errors = np.linalg.norm(projected - destination_points, axis=1)
+        inliers = errors &lt; inlier_distance
+        if inliers.sum() &gt; best_inliers.sum():
+            best_inliers = inliers
+    if best_inliers.sum() &lt; 4:
+        return None, best_inliers
+    homography = computeH(source_points[best_inliers], destination_points[best_inliers])
+    projected = apply_homography(homography, source_points)
+    errors = np.linalg.norm(projected - destination_points, axis=1)
+    inliers = np.isfinite(errors) &amp; (errors &lt; inlier_distance)
+    return homography, inliers</code></pre>
+            </div>
+
+            <div class="pyramid-example" style="margin-top: 2.5rem;">
+                <div class="example-heading">
+                    <h3>Living room · IMG_3325, IMG_3326, IMG_3327</h3>
+                </div>
+                <div class="plate-row two">
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./a4/living_feather.jpg" alt="Living room mosaic stitched from hand-picked correspondences"></div>
+                        <p class="photo-caption">Manual</p>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./b4/living_feather.jpg" alt="Living room mosaic stitched from automatic correspondences"></div>
+                        <p class="photo-caption">Automatic</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Posters · IMG_3330, IMG_3331, IMG_3332</h3>
+                </div>
+                <div class="plate-row two">
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./a4/posters_feather.jpg" alt="Poster mosaic stitched from hand-picked correspondences"></div>
+                        <p class="photo-caption">Manual</p>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./b4/posters_feather.jpg" alt="Poster mosaic stitched from automatic correspondences"></div>
+                        <p class="photo-caption">Automatic</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pyramid-example">
+                <div class="example-heading">
+                    <h3>Door · IMG_3332, IMG_3333, IMG_3334</h3>
+                </div>
+                <div class="plate-row two">
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./a4/door_feather.jpg" alt="Door mosaic stitched from hand-picked correspondences"></div>
+                        <p class="photo-caption">Manual</p>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-frame"><img src="./b4/door_feather.jpg" alt="Door mosaic stitched from automatic correspondences"></div>
+                        <p class="photo-caption">Automatic</p>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
